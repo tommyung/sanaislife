@@ -22,6 +22,6 @@ async def on_ready():
     print(client.user.id)
     print('------')
 
-def index(request)
+def index(request):
     client.run(os.environ.get(token))
 #NDQzNTY5NzU3ODA3OTY4MjU2.DdPycQ.wzKxgVcytX3sbvslj5zZg32sLmU

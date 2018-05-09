@@ -23,6 +23,6 @@ async def on_ready():
     print(client.user.id)
     print('------')
  
-clinet.run("NDQzNTY5NzU3ODA3OTY4MjU2.DdPycQ.wzKxgVcytX3sbvslj5zZg32sLmU")
+client.run("NDQzNTY5NzU3ODA3OTY4MjU2.DdPycQ.wzKxgVcytX3sbvslj5zZg32sLmU")
 #client.run(requestToken())
 #NDQzNTY5NzU3ODA3OTY4MjU2.DdPycQ.wzKxgVcytX3sbvslj5zZg32sLmU

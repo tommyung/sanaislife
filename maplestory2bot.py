@@ -1,9 +1,9 @@
 import discord
 import os
 
-def requestToken():
-    tokenAdd = str(os.environ.get(token))
-    return tokenAdd
+#def requestToken():
+#    tokenAdd = str(os.environ.get(token))
+#    return tokenAdd
 
 client = discord.Client()
 @client.event
@@ -23,5 +23,6 @@ async def on_ready():
     print(client.user.id)
     print('------')
  
-client.run(requestToken())
+clinet.run("NDQzNTY5NzU3ODA3OTY4MjU2.DdPycQ.wzKxgVcytX3sbvslj5zZg32sLmU")
+#client.run(requestToken())
 #NDQzNTY5NzU3ODA3OTY4MjU2.DdPycQ.wzKxgVcytX3sbvslj5zZg32sLmU

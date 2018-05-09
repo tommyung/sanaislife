@@ -3,7 +3,6 @@ import os
 def index(request):
     tokenAddress = string(os.environ.get(token))
 
-is_prod = os.environ.get(
 client = discord.Client()
 @client.event
 async def on_message(message):

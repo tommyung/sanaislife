@@ -22,6 +22,6 @@ async def on_ready():
     print(client.user.id)
     print('------')
    
-requestToken()
+requestToken(tokenAddress)
 client.run(os.environ.get(tokenAddress))
 #NDQzNTY5NzU3ODA3OTY4MjU2.DdPycQ.wzKxgVcytX3sbvslj5zZg32sLmU

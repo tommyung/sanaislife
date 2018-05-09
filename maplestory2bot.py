@@ -1,8 +1,8 @@
 import discord
 import os
 
-def requestToken(request):
-    return tokenAddres(token)
+def requestToken():
+    return token
 
 client = discord.Client()
 @client.event
@@ -22,6 +22,5 @@ async def on_ready():
     print(client.user.id)
     print('------')
    
-requestToken(tokenAddress)
-client.run(os.environ.get(tokenAddress))
+client.run(os.environ.get(requestToken()))
 #NDQzNTY5NzU3ODA3OTY4MjU2.DdPycQ.wzKxgVcytX3sbvslj5zZg32sLmU

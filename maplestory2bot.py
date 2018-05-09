@@ -3,8 +3,6 @@ import os
 
 #def requestToken():
 #    tokenAdd = str(os.environ.get(token))
-#    return tokenAdd
-
 client = discord.Client()
 @client.event
 async def on_message(message):
@@ -23,6 +21,5 @@ async def on_ready():
     print(client.user.id)
     print('------')
 tokenAddress = os.environ['token'] 
-#client.run("NDQzNTY5NzU3ODA3OTY4MjU2.DdPycQ.wzKxgVcytX3sbvslj5zZg32sLmU")
+
 client.run(tokenAddress)
-#NDQzNTY5NzU3ODA3OTY4MjU2.DdPycQ.wzKxgVcytX3sbvslj5zZg32sLmU

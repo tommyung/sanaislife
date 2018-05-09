@@ -1,1 +1,1 @@
-python maplestory2bot.py
+worker: python maplestory2bot.py

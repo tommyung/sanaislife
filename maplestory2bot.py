@@ -1,7 +1,7 @@
 import discord
 
 client = discord.Client()
-
+token
 @client.event
 async def on_message(message):
     # we do not want the bot to reply to itself
@@ -19,4 +19,5 @@ async def on_ready():
     print(client.user.id)
     print('------')
 
-client.run('NDQzNTY5NzU3ODA3OTY4MjU2.DdPycQ.wzKxgVcytX3sbvslj5zZg32sLmU')
+client.run(token)
+#NDQzNTY5NzU3ODA3OTY4MjU2.DdPycQ.wzKxgVcytX3sbvslj5zZg32sLmU

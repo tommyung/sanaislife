@@ -2,7 +2,7 @@ import discord
 import os
 
 def requestToken():
-    tokenAdd = string(os.environ.get(token))
+    tokenAdd = str(os.environ.get(token))
     return tokenAdd
 
 client = discord.Client()

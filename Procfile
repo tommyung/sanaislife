@@ -1,1 +1,1 @@
-python maplestory 2 bot.py
+python maplestory2bot.py

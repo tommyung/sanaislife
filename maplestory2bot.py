@@ -10,7 +10,7 @@ async def on_message(message):
     if message.author == client.user:
         return
 
-    if message.content.startswith('!hello'):
+    if message.content.startswith('!raid'):
         scope = ['http://spreadsheets.google.com/feeds',
                 'https://www.googleapis.com/auth/drive']
         creds = ServiceAccountCredentials.from_json_keyfile_name('Raiding form-b21d7c952538.json', scope)
@@ -23,10 +23,7 @@ async def on_message(message):
 
 @client.event
 async def on_ready():
-    print('Logged in as')
-    print(client.user.name)
-    print(client.user.id)
-    print('------')
+    print('Bot has started...')
     
 tokenAddress = os.environ['token'] 
 client.run(tokenAddress)

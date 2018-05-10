@@ -20,7 +20,7 @@ async def on_message(message):
         creds = ServiceAccountCredentials.from_json_keyfile_name('Raiding form-b21d7c952538.json', scope)
         clientName = gspread.authorize(creds)
         sheet = clientName.open("Raiding form").sheet1
-                if msgData.lower() == 'create':
+        if msgSplit[1].lower() == 'create':
              row = [msgSplit[2], msgSplit[3], msgSplit[4]]
              sheet.insert_row(row, 2)
         raidName = sheet.cell(2,2).value

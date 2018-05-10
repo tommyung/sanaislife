@@ -13,6 +13,7 @@ async def on_message(message):
     if message.content.startswith('!raid'):
         msgContent = message.content
         msgSplit = msgContent.split()
+        msgList
         #to be determined on how its formatted
         #!raid create yourName bossName time
         scope = ['http://spreadsheets.google.com/feeds',
@@ -23,8 +24,14 @@ async def on_message(message):
         if msgSplit[1].lower() == 'create':
              row = [msgSplit[2], msgSplit[3], msgSplit[4]]
              sheet.insert_row(row, 2)
-        raidName = sheet.cell(2,2).value
-        msgRaid = '{0.author.mention} have created a raid sign up for ' + raidName
+             raidName = sheet.cell(2,2).value
+             msgRaid = '{0.author.mention} have created a raid sign up for ' + raidName
+            
+        elif msgSplit[1].lower() == 'list':
+            for x in range(5):
+                msgTmp = sheet.row_values(x)
+                msgList = msgList + "\n" + msgTmp
+                msgRaid = '{0.author.mention} the list of raids: \n' + msgList
         msg = str(msgRaid).format(message)
         await client.send_message(message.channel, msg)
 

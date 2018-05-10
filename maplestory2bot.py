@@ -13,18 +13,17 @@ async def on_message(message):
     if message.content.startswith('!raid'):
         msgContent = message.content
         msgSplit = msgContent.split()
-        for tmp in msgSplit:
         #to be determined on how its formatted
         #!raid create bossName creatorName time
-        if msgData.lower() is 'create':
-             row = [msgSplit[2], msgSplit[3], msgSplit[4]]
-             sheet.insert_row(row, 2)
         scope = ['http://spreadsheets.google.com/feeds',
                 'https://www.googleapis.com/auth/drive']
         creds = ServiceAccountCredentials.from_json_keyfile_name('Raiding form-b21d7c952538.json', scope)
         clientName = gspread.authorize(creds)
         sheet = clientName.open("Raiding form").sheet1
-        raidName = sheet.cell(1,1).value
+                if msgData.lower() == 'create':
+             row = [msgSplit[2], msgSplit[3], msgSplit[4]]
+             sheet.insert_row(row, 2)
+        raidName = sheet.cell(2,2).value
         msgRaid = '{0.author.mention} have created a raid sign up ' + raidName
         msg = str(msgRaid).format(message)
         await client.send_message(message.channel, msg)

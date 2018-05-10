@@ -1,9 +1,11 @@
 {
+  "key": process.env.private_key,
+  "email": process.env.client_email,
   "type": "service_account",
   "project_id": "raiding-form",
   "private_key_id": "b21d7c95253865cb030f57c29e15e1d89bca8be0",
-  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCtmtlH+EYSIh/x\ndZ9/d8NOu7GD4rSJjBQDMRM3wbT6X9tXWwxrIRh1gmRP5uWuC6NcU1cfbGUJeVJy\ntgSW5U25I20fPnjjd6i0QkKP7+aZtVE5h1SRe7AIEROSCnGt73gInWgqNzsGngNe\n7FjHiQwv3VWiZautwoZgWwuPowpwjJLWuam9A5RHboP0YBQ5HD0+vc3J/ZBrVaZQ\nPdUk18e4LRVZGgXk8b+37Vu0994uE7g25U35J6eHDqk/r1CbIXAxf9mp4yCWbWM8\nizdp2kANZLgJtQYDIbfkKl+uqXqmavhmzc0qx/dG2RDP8/8iQKU0HOJ90R/uJ9Y6\nsXdHf2UhAgMBAAECggEALHC1y2seQNkUdUKndEFrsTVx8TFxBr7hhpmi8kR3eBpe\ns0N+79OWh8o7tIqGZCHdjS5WYJhmWuEAPpYioaAMX+bWMcfTuWLxwEcv89m1Hcbh\nBomCmAViIAaDDID47c4d25Kzzg66YOzFLyDwbw/Bm2Uc3UgKhR4FORhFYt0ZOIsO\ng+3fhJDpNL7ja+v9QEu46IJVbpSeQmzmGKSvl5ElRFKS2Gdfe6JgF0Z3W4FGoqke\njvVb51VKZ5Nu+eHz2JCgvZCHkCM9jTvOLjjT1w07bSgTZD/Tu6OZ8gpa8JdXgZnA\ntJPAla/B7JktOLB4d/zMp6v7Wcn4gp0nOuQpqrv1QwKBgQD1YY6sX43KQXyUhu/Y\nqrTUkqg/Gv0U59ZrFWeFAhmBRa0xprOtKA08u3SVoEFmFVTQ3pGwz2H3Em0OjIel\niuMACHQG87jt+h0hia6XYjTqACXOsv/P1RSQroPiZ2APoB9BaPN6svStdQLjs1HG\nqcU8rrsPWu5BuB8Ryur3DsfjXwKBgQC1Hh9Fcag1tt6D2+UtqH98M2TDK3UFcW1q\nZ1wifam7Gy4K+ZrJlNDcmFDIzCrX1dohfWxvfR3HRT7cEvZiZdG5p4zqf52GkYUG\nbEd2kG4scOHZ3kjesL5ObJZeOfAoDzYA6ycsgOZE+Ci/b8l9BEULWt4Da68gVikW\n1kB2B6IHfwKBgCQQUofDA3PWbBjoPBf7/te/NjsQHGIWMM1MOAq0ZEs7kljZx06L\ntGZYpqnXA8WdHPoVvBPgZuWJL74TqVwLLZGzrFnZODTBrcZgFejp5hz+KJBYfoBt\nMLiS7Y844kVpoy5Z3m8KHivgJqyQjlREX1ir1ZJMKvg9t1NGH4JwCbDBAoGAaXS7\ngoS2C2iJ0T7lBxu39wo5nkYcYen0amL6S37dp/sgaPWCweKrZfYt+2ydeYSj+KH9\n1ECGaTORcTR9Tze30KCVNSjPAL6UNPQw/AEGlUu4xVFfHoLMm/8v4ndbtQd+SzSg\nX5JCAWB44VZmfCtTRFRJNraphmuEiy5+4/p3xmMCgYEApFh6wTBI1PZb9R7KThGC\nxsrOBQo98E51YLSmRyJPgnWaaURuQK6KPwTzu1naAprDLWRMNxnOEnFMmvoORssD\n1M9f1vP0QRoZ91HqM7WqoL+G5CHXWViCMGBEcve2vGMmutGJjC4WfatX4n/biyLR\n+6IAYX5OS/9GJm8qTJzGD7c=\n-----END PRIVATE KEY-----\n",
-  "client_email": "maplestory2bot@raiding-form.iam.gserviceaccount.com",
+  "private_key": key,
+  "client_email": email,
   "client_id": "104005637145031811947",
   "auth_uri": "https://accounts.google.com/o/oauth2/auth",
   "token_uri": "https://accounts.google.com/o/oauth2/token",

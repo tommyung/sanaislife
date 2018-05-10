@@ -18,7 +18,7 @@ async def on_message(message):
         sheet = clientName.open("Raiding form").sheet1
         list_of_hashes = sheet.cell(1,1).value      
         msg = 'Hello {0.author.mention}'.format(message)
-        msg = (list_of_hashes)
+        msg = 'You have created a raid'.format(list_of_hashes)
         await client.send_message(message.channel, msg)
 
 @client.event

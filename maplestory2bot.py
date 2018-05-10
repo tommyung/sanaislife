@@ -11,7 +11,8 @@ async def on_message(message):
         return
 
     if message.content.startswith('!hello'):
-        scope = ['http://spreadsheets.google.com/feeds']
+        scope = ['http://spreadsheets.google.com/feeds',
+                'https://www.googleapis.com/auth/drive']
         creds = ServiceAccountCredentials.from_json_keyfile_name('Raiding form-b21d7c952538.json', scope)
         clientName = gspread.authorize(creds)
         sheet = clientName.open("Raiding form").sheet1

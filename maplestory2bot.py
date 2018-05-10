@@ -13,8 +13,8 @@ async def on_message(message):
     if message.content.startswith('!hello'):
         scope = ['http://spreadsheets.google.com/feeds']
         creds = ServiceAccountCredentials.from_json_key_name('Raiding form-b21d7c952538', scope)
-        client = gspread.authorize(creds)
-        sheet = client.open("Raiding form").sheet1
+        clientName = gspread.authorize(creds)
+        sheet = clientName.open("Raiding form").sheet1
         list_of_hashes = sheet.get_all_records()        
         msg = 'Hello {0.author.mention}'.format(message)
         msg = (list_of_hashes)

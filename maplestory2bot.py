@@ -13,7 +13,6 @@ async def on_message(message):
     if message.content.startswith('!raid'):
         msgContent = message.content
         msgSplit = msgContent.split()
-        msgList
         #to be determined on how its formatted
         #!raid create yourName bossName time
         scope = ['http://spreadsheets.google.com/feeds',

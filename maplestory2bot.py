@@ -28,8 +28,9 @@ async def on_message(message):
             
         elif msgSplit[1].lower() == 'list':
             for x in range(5):
-                msgTmp = sheet.row_values(x)
-                msgList = msgList + "\n" + msgTmp
+                msgList = sheet.get_all_values()
+                #msgTmp = sheet.row_values(x)
+                #msgList = msgList + "\n" + msgTmp
                 msgRaid = '{0.author.mention} the list of raids: \n' + msgList
         msg = str(msgRaid).format(message)
         await client.send_message(message.channel, msg)

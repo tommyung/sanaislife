@@ -25,7 +25,9 @@ async def on_message(message):
              sheet.insert_row(row, 2)
              raidName = sheet.cell(2,2).value
              msgRaid = '{0.author.mention} has created a raid sign up for' + raidName
-            
+        
+        else:
+            msgRaid = '{0.author.mention}, you entered an invalid command. \nTo create a raid, type "!raid create IGN Boss Time\nTo view avaliable raids, type "!raid show"
         #elif msgSplit[1].lower() == 'list':
         #    for x in range(5):
         #        msgList = sheet.get_all_values()

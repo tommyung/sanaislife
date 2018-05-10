@@ -16,7 +16,7 @@ async def on_message(message):
         creds = ServiceAccountCredentials.from_json_keyfile_name('Raiding form-b21d7c952538.json', scope)
         clientName = gspread.authorize(creds)
         sheet = clientName.open("Raiding form").sheet1
-        list_of_hashes = sheet.get_all_records()        
+        list_of_hashes = sheet.cell(1,1).value      
         msg = 'Hello {0.author.mention}'.format(message)
         msg = (list_of_hashes)
         await client.send_message(message.channel, msg)

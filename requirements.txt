@@ -1,2 +1,2 @@
 discord.py==0.16.8
-gspread.py oauth2client
+gspread oauth2client

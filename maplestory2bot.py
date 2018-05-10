@@ -14,14 +14,14 @@ async def on_message(message):
         msgContent = message.content
         msgSplit = msgContent.split()
         #to be determined on how its formatted
-        #!raid create bossName creatorName time
+        #!raid create yourName bossName creatorName time
         scope = ['http://spreadsheets.google.com/feeds',
                 'https://www.googleapis.com/auth/drive']
         creds = ServiceAccountCredentials.from_json_keyfile_name('Raiding form-b21d7c952538.json', scope)
         clientName = gspread.authorize(creds)
         sheet = clientName.open("Raiding form").sheet1
         if msgSplit[1].lower() == 'create':
-             row = [msgSplit[2], msgSplit[3], msgSplit[4]]
+             row = [msgSplit[2], msgSplit[3], msgSplit[4], msgSplit[5]]
              sheet.insert_row(row, 2)
         raidName = sheet.cell(2,2).value
         msgRaid = '{0.author.mention} have created a raid sign up ' + raidName

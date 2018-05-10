@@ -17,7 +17,7 @@ async def on_message(message):
         clientName = gspread.authorize(creds)
         sheet = clientName.open("Raiding form").sheet1
         raidName = sheet.cell(1,1).value
-        msgRaid = '{0.author.mention} have created a raid sign up' + raidName
+        msgRaid = '{0.author.mention} have created a raid sign up ' + raidName
         msg = str(msgRaid).format(message)
         await client.send_message(message.channel, msg)
 

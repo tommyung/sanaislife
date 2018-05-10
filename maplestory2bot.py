@@ -27,7 +27,7 @@ async def on_message(message):
              msgRaid = '{0.author.mention} has created a raid sign up for' + raidName
         
         else:
-            msgRaid = '{0.author.mention}, you entered an invalid command. \nTo create a raid, type "!raid create [IGN] [Boss] [Time]" e.g. !raid create Sana Zakum 5:00PM_EST\nTo view avaliable raids, type "!raid show"'
+            msgRaid = '{0.author.mention}, you entered an invalid command. \nTo create a raid, type "!raid create [IGN] [Boss] [Time]"\ne.g. !raid create Sana Zakum 5:00PM_EST\n\nTo view avaliable raids, type "!raid show"'
         #elif msgSplit[1].lower() == 'list':
         #    for x in range(5):
         #        msgList = sheet.get_all_values()

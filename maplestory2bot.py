@@ -16,7 +16,7 @@ async def on_message(message):
         for tmp in msgSplit:
         #to be determined on how its formatted
         #!raid create bossName creatorName time
-        if msgData.lower() in ['create']:
+        if msgData.lower() is 'create':
              row = [msgSplit[2], msgSplit[3], msgSplit[4]]
              sheet.insert_row(row, 2)
         scope = ['http://spreadsheets.google.com/feeds',

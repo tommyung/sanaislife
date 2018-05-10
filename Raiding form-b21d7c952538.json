@@ -1,6 +1,4 @@
 {
-  "email": StringIO.new(ENV['client_email']),
-  "key": StringIO.new(ENV['private_key']),
   "type": "service_account",
   "project_id": "raiding-form",
   "private_key_id": "b21d7c95253865cb030f57c29e15e1d89bca8be0",

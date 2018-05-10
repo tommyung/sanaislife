@@ -24,7 +24,7 @@ async def on_message(message):
              row = [msgSplit[2], msgSplit[3], msgSplit[4], msgSplit[5]]
              sheet.insert_row(row, 2)
         raidName = sheet.cell(2,2).value
-        msgRaid = '{0.author.mention} have created a raid sign up ' + raidName
+        msgRaid = '{0.author.mention} have created a raid sign up for ' + raidName
         msg = str(msgRaid).format(message)
         await client.send_message(message.channel, msg)
 

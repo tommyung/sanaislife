@@ -27,9 +27,9 @@ async def on_message(message):
         sheet = clientName.open("Raiding form").sheet1
         if msgSplit[1].lower() == 'create':
             row = [msgSplit[2], msgSplit[3], msgSplit[4]]
-             sheet.insert_row(row, 2)
-             raidName = sheet.cell(2,2).value
-             msgRaid = '{0.author.mention} has created a raid sign up for' + raidName
+            sheet.insert_row(row, 2)
+            raidName = sheet.cell(2,2).value
+            msgRaid = '{0.author.mention} has created a raid sign up for' + raidName
         
         else:
             msgRaid = '{0.author.mention}, you entered an invalid command. \nTo create a raid, type "!raid create [IGN] [Boss] [Time]"\ne.g. !raid create Sana Zakum 5:00PM_EST\n\nTo view avaliable raids, type "!raid show"'

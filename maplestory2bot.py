@@ -1,6 +1,6 @@
 import discord
-import gspread
-from oauth2client.service_account import ServiceAccountCredentials
+#import gspread
+#from oauth2client.service_account import ServiceAccountCredentials
 import os
 
 client = discord.Client()

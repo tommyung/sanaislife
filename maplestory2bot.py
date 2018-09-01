@@ -5,12 +5,12 @@ import os
 
 client = discord.Client()
 
-
 @client.event
 async def on_member_join(member):
     role = discord.utils.get(member.server.roles, name='Interviewee')
     await client.add_roles(member,role)
-    
+
+@client.event
 async def on_message(message):
     
     # we do not want the bot to reply to itself

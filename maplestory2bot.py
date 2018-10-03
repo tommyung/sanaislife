@@ -18,7 +18,7 @@ async def on_message(message):
         return
     if message.content.startswith('!time'):
         msgTime = datetime.datetime.now().time()
-        msgContent = '{0.author.metion} server time is' + str(msgTime)
+        msgContent = '{0.author.mention} server time is ' + str(msgTime)
         await client.send_message(message.channel, msgContent)
     # we do not want the bot to reply to itself
 #    if message.author == client.user:

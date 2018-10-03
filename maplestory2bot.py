@@ -18,8 +18,7 @@ async def on_message(message):
         return
     if message.content.startswith('!time'):
         msgTime = datetime.datetime.now().time()
-        timeSplit = (msgTime.split(':'))
-        
+        timeSplit = (str(msgTime).split(':'))
         msgContent = '{0.author.mention} server time is ' + str(timeSplit[0]) + ':' + str(timeSplit[1])
         msg = str(msgContent).format(message)
         await client.send_message(message.channel, msg)

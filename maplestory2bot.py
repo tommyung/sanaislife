@@ -1,7 +1,6 @@
 import discord
 import gspread
 import datetime
-import datetime
 from oauth2client.service_account import ServiceAccountCredentials
 from discord.ext import commands
 import os

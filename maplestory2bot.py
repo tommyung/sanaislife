@@ -22,7 +22,7 @@ async def on_message(message):
         combineTime = timeSplit[0] + ':' + timeSplit[1]
         resetHour = 23 - int(timeSplit[0])
         resetMinute = 60 - int(timeSplit[1])
-        msgContent = '{0.author.mention} server time is ' + str(timeSplit[0]) + ':' + str(timeSplit[1]) + '\nServer reset in ' + str(resethour) + ' hour(s), ' + str(resetMinute) + ' and minute(s)' 
+        msgContent = '{0.author.mention} server time is ' + str(timeSplit[0]) + ':' + str(timeSplit[1]) + '\nServer reset in ' + str(resetHour) + ' hour(s), ' + str(resetMinute) + ' and minute(s)' 
         msg = str(msgContent).format(message)
         await client.send_message(message.channel, msg)
     # we do not want the bot to reply to itself

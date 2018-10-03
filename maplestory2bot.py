@@ -1,5 +1,7 @@
 import discord
 import gspread
+import datetime
+from datetime import datetime
 from oauth2client.service_account import ServiceAccountCredentials
 from discord.ext import commands
 import os
@@ -11,9 +13,12 @@ async def on_member_join(member):
     role = discord.utils.get(member.server.roles, name='Interviewee')
     await client.add_roles(member,role)
 
-#@client.event
-#async def on_message(message):
-    
+@client.event
+async def on_message(message):
+    if message.author == clinet.user:
+        return
+    if message.content.startswith('!time'):
+        msgContent = '{0.author.metion} server time is' + datetime.datetime.now().time()
     # we do not want the bot to reply to itself
 #    if message.author == client.user:
 #        return

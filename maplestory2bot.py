@@ -19,7 +19,9 @@ async def on_message(message):
     if message.content.startswith('!time'):
         msgTime = datetime.datetime.now().time()
         timeSplit = (str(msgTime).split(':'))
-        msgContent = '{0.author.mention} server time is ' + str(timeSplit[0]) + ':' + str(timeSplit[1])
+        combineTime = timeSplit[0] + ':' + timeSplit[1]
+        resetTime = 24 - int(timeSplit[0])
+        msgContent = '{0.author.mention} server time is ' + str(timeSplit[0]) + ':' + str(timeSplit[1]) + '\nServer reset in ' + resetTime
         msg = str(msgContent).format(message)
         await client.send_message(message.channel, msg)
     # we do not want the bot to reply to itself

@@ -15,7 +15,7 @@ async def on_member_join(member):
 
 @client.event
 async def on_message(message):
-    if message.author == clinet.user:
+    if message.author == client.user:
         return
     if message.content.startswith('!time'):
         msgContent = '{0.author.metion} server time is' + datetime.datetime.now().time()

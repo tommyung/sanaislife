@@ -6,7 +6,7 @@ from discord.ext import commands
 import os
 
 client = discord.Client()
-derogatoryList = ["whore", "hoe", "nigger", "nigga", "chink", "beaner", "nigguh", "niggar"]
+derogatoryList = ["whore", "nigger", "nigga", "chink", "nigguh", "niggar", "beaner"]
 
 @client.event
 async def on_member_join(member):

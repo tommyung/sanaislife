@@ -29,6 +29,8 @@ async def on_message(message):
     for derogatoryTerms in derogatoryList:
         if derogatoryTerms in message.content:
             client.delete_message(message)
+    if 'hoe' in message.content:
+        client.delete_message(message)
     # we do not want the bot to reply to itself
 #    if message.author == client.user:
 #        return

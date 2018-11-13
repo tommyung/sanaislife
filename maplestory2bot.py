@@ -6,6 +6,7 @@ from discord.ext import commands
 import os
 
 client = discord.Client()
+derogatoryList = ["whore", "hoe", "nigger", "nigga", "chink", "beaner", "nigguh", "niggar"]
 
 @client.event
 async def on_member_join(member):
@@ -25,6 +26,9 @@ async def on_message(message):
         msgContent = '{0.author.mention} server time is ' + str(timeSplit[0]) + ':' + str(timeSplit[1]) + '\nServer reset in ' + str(resetHour) + ' hour(s) and ' + str(resetMinute) + ' minute(s)' 
         msg = str(msgContent).format(message)
         await client.send_message(message.channel, msg)
+    for derogatoryTerms in derogatoryList:
+        if derogatoryTerms in message.content:
+            client.delete_message(message)
     # we do not want the bot to reply to itself
 #    if message.author == client.user:
 #        return

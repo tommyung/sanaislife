@@ -23,7 +23,8 @@ async def on_message(message):
         combineTime = timeSplit[0] + ':' + timeSplit[1]
         resetHour = 23 - int(timeSplit[0])
         resetMinute = 60 - int(timeSplit[1])
-        msgContent = '{0.author.mention} server time is ' + str(timeSplit[0]) + ':' + str(timeSplit[1]) + '\nServer reset in ' + str(resetHour) + ' hour(s) and ' + str(resetMinute) + ' minute(s)' 
+        mdyTime = (str(msgTime.month) + '/' +  str(msgTime.day) + '/' + str(msgTime.year)
+        msgContent = '{0.author.mention} server time is ' + str(timeSplit[0]) + ':' + str(timeSplit[1]) "\nDate:" + mdyTime + '\nServer reset in ' + str(resetHour) + ' hour(s) and ' + str(resetMinute) + ' minute(s)' 
         msg = str(msgContent).format(message)
         await client.send_message(message.channel, msg)
     for derogatoryTerms in derogatoryList:

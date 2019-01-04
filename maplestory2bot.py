@@ -26,6 +26,9 @@ async def on_message(message):
         msgContent = '{0.author.mention} server time is ' + str(timeSplit[0]) + ':' + str(timeSplit[1]) + '\nServer reset in ' + str(resetHour) + ' hour(s) and ' + str(resetMinute) + ' minute(s)' 
         msg = str(msgContent).format(message)
         await client.send_message(message.channel, msg)
+    if message.content.startswith('!quack'):
+        msg = 'https://www.youtube.com/watch?v=q38Y5FLK63k'
+        await client.send_message(message.channel, msg)
     for derogatoryTerms in derogatoryList:
         if derogatoryTerms in message.content:
             await client.delete_message(message)

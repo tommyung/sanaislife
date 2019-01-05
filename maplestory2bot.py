@@ -27,7 +27,7 @@ async def on_message(message):
         msg = str(msgContent).format(message)
         await client.send_message(message.channel, msg)
     if message.content.startswith('!quack'):
-        msg = 'https://www.youtube.com/watch?v=q38Y5FLK63k'
+        msg = 'https://www.youtube.com/watch?v=QKq42dE6cvI'
         await client.send_message(message.channel, msg)
     for derogatoryTerms in derogatoryList:
         if derogatoryTerms in message.content:

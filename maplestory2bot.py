@@ -1,5 +1,4 @@
 import discord
-import gspread
 import datetime
 from oauth2client.service_account import ServiceAccountCredentials
 from discord.ext import commands
@@ -58,6 +57,7 @@ async def on_message(message):
                 #!raid join <raidName> <Class>
                 appendDict = str(raidDict[msgSplit[2].lower()]) + ' ' + message.author + msgSplit[3] + ', '
                 raidDict[msgSplit[2].lower()] = appendDict
+                #Maybe using another key to keep tabs on the amount of people that joined the raid and cannot exceed the number the user specified?
     else:
         msg = '{0.author.mention, you have entered an invalid command. The raid commands it goes by the following\n\nTo create: !raid create <raid name> <boss> <time>\nTo join: !raid join <raid name> <class>'
         await client.send_message(message.channel, msg)

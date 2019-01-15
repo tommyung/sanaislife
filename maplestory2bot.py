@@ -66,13 +66,12 @@ async def on_message(message):
                     await client.send_message(message.channel, msg)
             elif command == 'join':
                 #!raid join <raidName> <Class>
-                if message.author.nick
-                    if len(raidDict[raidName]['attendees']) != 10:
-                        raidDict[raidName]['attendees'].append(str(message.author.nick) + ' ' + msgSplit[3])
-                        msg = raidList(raidDict[raidName])
-                        await client.send_message(message.channel, msg)
-                    else:
-                        msg = 'That raid is full, contact ' + raidDict[raidname]['author'].mention + ' or another Raid master for any help.'
+                if len(raidDict[raidName]['attendees']) != 10:
+                    raidDict[raidName]['attendees'].append(str(message.author.nick) + ' ' + msgSplit[3])
+                    msg = raidList(raidDict[raidName])
+                    await client.send_message(message.channel, msg)
+                else:
+                    msg = 'That raid is full, contact ' + raidDict[raidname]['author'].mention + ' or another Raid master for any help.'
             elif command == 'remove':
                 #!raid remove <raidName>
                 raidDict.pop(msgSpilt[2].lower())

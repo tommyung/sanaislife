@@ -5,6 +5,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 from discord.ext import commands
 import os
 
+raidDict = {}
 client = discord.Client()
 derogatoryList = ["whore", "nigger", "nigga", "chink", "nigguh", "niggar", "beaner"]
 
@@ -29,6 +30,14 @@ async def on_message(message):
     if message.content.startswith('!quack'):
         msg = 'https://www.youtube.com/watch?v=QKq42dE6cvI'
         await client.send_message(message.channel, msg)
+    if message.content.startswith('!raid'):
+        msgContent = message.content
+        msgSplit = msgContent.split()
+        if msgSplit[1].lower() == 'create':
+            #raidName time job
+            raidDict = {client.send_message, msgSplit[2], msgSplit[3], msgSplit[4]}
+            
+            
     for derogatoryTerms in derogatoryList:
         if derogatoryTerms in message.content:
             await client.delete_message(message)

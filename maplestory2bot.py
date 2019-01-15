@@ -10,8 +10,10 @@ derogatoryList = ["whore", "nigger", "nigga", "chink", "nigguh", "niggar", "bean
 
 def raidList(raid):
     returnString = raid['boss'] + ' ' + raid['time'] + ' lead by ' + raid['author'] + '\n'
-    for x in range(0, raid['count']):
-            returnString += str(x) + '. ' + raid[x] + '\n'
+    count = 1;
+    for x in raid['attendees']:
+        returnString += str(count) + '. ' + x + '\n'
+        count += 1
     return returnString
 
 @client.event
@@ -52,43 +54,56 @@ async def on_message(message):
                     msg = 'A raid with the name ' + msgSplit[2] + ' already exists.'
                     await client.send_message(message.channel, msg)
                 elif len(msgSplit) != 5:
-                    msg = '${message.author.mention}, you have entered an invalid command. The raid commands it goes by the following\n\nTo create: !raid create <raid name> <boss> <time> Example: !raid create raid1 cdev 01/31-07:30PST\nTo join: !raid join <raid name> <class>'
+                    msg = '${0.mention}, you have entered an invalid command. The raid commands it goes by the following\n\nTo create: !raid create <raid name> <boss> <time> Example: !raid create raid1 cdev 01/31-07:30PST\nTo join: !raid join <raid name> <class>'.format(message.author)
                     await client.send_message(message.channel, msg)
                 else:
                     raidDict[raidName] = {}
                     raidDict[raidName]['author'] = str(message.author)
                     raidDict[raidName]['boss'] = str(msgSplit[3].lower())
                     raidDict[raidName]['time'] = str(msgSplit[4].lower())
-                    raidDict[raidName]['count'] = 0
+                    raidDict[raidName]['attendees'] = []
                     msg = 'A new raid has been created \nName: ' + msgSplit[2]
                     await client.send_message(message.channel, msg)
             elif command == 'join':
                 #!raid join <raidName> <Class>
-                raidDict[msgSplit[2].lower()]['count'] = str(message.author) + ' ' + msgSplit[3]
-                raidDict[msgSplit[2].lower()]['count'] += 1
-                msg = raidList(raidDict[msgSplit[2].lower()])
-                await client.send_message(message.channel, msg)
+                if message.author.nick
+                    if len(raidDict[raidName]['attendees']) != 10:
+                        raidDict[raidName]['attendees'].append(str(message.author.nick) + ' ' + msgSplit[3])
+                        msg = raidList(raidDict[raidName])
+                        await client.send_message(message.channel, msg)
+                    else:
+                        msg = 'That raid is full, contact ' + raidDict[raidname]['author'].mention + ' or another Raid master for any help.'
             elif command == 'remove':
                 #!raid remove <raidName>
                 raidDict.pop(msgSpilt[2].lower())
             elif command == 'clear':
                 #!raid clear
                 raidDict.clear()
+            elif command == 'show':
+                #!raid join <raidName>
+                if msgSplit[2].lower() in raidDict:
+                    msg = raidList(raidDict[raidName])
+                    await client.send_message(message.channel, msg)
+                else:
+                    msg = msgSplit[2] + ' is not a scheduled raid.'
+                    await client.send_message(message.channel, msg)
         else:
             if command == 'create':
                 msg = '{0.mention} only those who has the role Raid master can create a listing for raids'.format(message.author)
                 await client.send_message(message.channel, msg)
             elif command == 'join':
                 #!raid join <raidName> <Class>
-                raidDict[msgSplit[2].lower()]['count'] = str(message.author) + ' ' + msgSplit[3]
-                raidDict[msgSplit[2].lower()]['count'] += 1
-                msg = raidList(raidDict[msgSplit[2].lower()])
-                await client.send_message(message.channel, msg)
+                if len(raidDict[raidName]['attendees']) != 10:
+                    raidDict[raidName]['attendees'].append(str(message.author.nick) + ' ' + msgSplit[3])
+                    msg = raidList(raidDict[raidName])
+                    await client.send_message(message.channel, msg)
+                else:
+                    msg = 'That raid is full, contact ' + raidDict[raidname]['author'].mention + ' or another Raid master for any help.'
                 #Maybe using another key to keep tabs on the amount of people that joined the raid and cannot exceed the number the user specified?
             elif command == 'show':
                 #!raid join <raidName>
                 if msgSplit[2].lower() in raidDict:
-                    msg = raidList(raidDict[[msgSplit[2].lower()]])
+                    msg = raidList(raidDict[raidName])
                     await client.send_message(message.channel, msg)
                 else:
                     msg = msgSplit[2] + ' is not a scheduled raid.'

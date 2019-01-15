@@ -34,9 +34,12 @@ async def on_message(message):
         msgContent = message.content
         msgSplit = msgContent.split()
         if msgSplit[1].lower() == 'create':
-            #raidName time job
-            raidDict = {client.send_message, msgSplit[2], msgSplit[3], msgSplit[4]}
-            
+            #boss time
+            raidDict[msgSplit[2].lower()] = message.author, msgSplit[3].lower(), msgSplit[4].lower()
+            msg = '{0.author.mention} has created a new raid'
+        elif msgSplit[1].lower() =='join':
+            appendDict = str(raidDict[msgSplit[2].lower()]) + ' ' + message.author + msgSplit[3] + ', '
+            raidDict[msgSplit[2].lower()] = appendDict
             
     for derogatoryTerms in derogatoryList:
         if derogatoryTerms in message.content:

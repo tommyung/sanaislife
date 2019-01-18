@@ -4,18 +4,17 @@ from oauth2client.service_account import ServiceAccountCredentials
 from discord.ext import commands
 import os
 
-os.environ["token"] = "NDQ0MjY5MzExOTM1MzgxNTI1.DdZd_g.r1Q3qZkNF6ai0fl_vEWfMoEqNBg"
-
 raidDict = {}
 client = discord.Client()
 derogatoryList = ["whore", "nigger", "nigga", "chink", "nigguh", "niggar", "beaner"]
 
 def raidList(raid, raidName):
-    returnString = 'Raid Name: ' + raidName + ' ' + raid['time'] + ' lead by ' + raid['author'] + '\n'
+    returnString = '```Raid Name: ' + raidName + ' ' + raid['time'] + ' lead by ' + raid['author'] + '\n'
     count = 1;
     for x in raid['attendees']:
         returnString += str(count) + '. ' + x + '\n'
         count += 1
+    returnString += '```'
     return returnString
 
 @client.event
@@ -44,63 +43,110 @@ async def on_message(message):
         await client.send_message(message.channel, msg)
 
 
-    if message.content.startswith('!raid'):
+    if message.content.startswith('!raid') and str(message.channel) == 'raid-dungeon-schedules':
         msgContent = message.content
         msgSplit = msgContent.split()
         command = msgSplit[1].lower()
-        raidName = msgSplit[2].lower()
+        raidName = msgSplit[2].lower() if len(msgSplit) >= 3 else ''
         if 'Raid master' in [y.name for y in message.author.roles]:
             if command == 'create':
-                #!raid create <raidName> <boss> <time>
+                #!raid create <raidName> <time>
                 if msgSplit[2] in raidDict:
                     msg = 'A raid with the name ' + msgSplit[2] + ' already exists.'
                     await client.send_message(message.channel, msg)
-                elif len(msgSplit) != 5:
-                    msg = '${0.mention}, you have entered an invalid command. The raid commands it goes by the following\n\nTo create: !raid create <raid name> <boss> <time> Example: !raid create raid1 cdev 01/31-07:30PST\nTo join: !raid join <raid name> <class>'.format(message.author)
+                elif len(msgSplit) != 4:
+                    msg = '${0.mention}, you have entered an invalid command. The raid commands it goes by the following\n\nTo create: !raid create <raid name> <time> Example: !raid create raid1 cdev 01/31-07:30PST\nTo join: !raid join <raid name> <class>'.format(message.author)
                     await client.send_message(message.channel, msg)
                 else:
                     raidDict[raidName] = {}
                     raidDict[raidName]['author'] = str(message.author)
-                    raidDict[raidName]['boss'] = str(msgSplit[3].lower())
-                    raidDict[raidName]['time'] = str(msgSplit[4].lower())
+                    raidDict[raidName]['time'] = str(msgSplit[3].lower())
                     raidDict[raidName]['attendees'] = []
-                    msg = 'A new raid has been created \nName: ' + raidName
+                    msg = 'A new raid has been created named: ' + raidName
                     await client.send_message(message.channel, msg)
             elif command == 'join':
                 #!raid join <raidName> <Class>
-                if len(raidDict[raidName]['attendees']) != 10:
-                    raidDict[raidName]['attendees'].append(str(message.author.nick) + ' ' + msgSplit[3])
-                    msg = raidList(raidDict[raidName], raidName)
-                    await client.send_message(message.channel, msg)
+                if len(msgSplit) == 4:
+                    if any(str(message.author.nick) in element for element in raidDict[raidName]['attendees']) or any(str(message.author) in element for element in raidDict[raidName]['attendees']):
+                        msg = 'You have already signed up for that raid. If this is a mistake, contact ' + raidDict[raidName]['author'] + ' or another Raid master for any help.'
+                        await client.send_message(message.channel, msg)
+                    else:
+                        if len(raidDict[raidName]['attendees']) != 10:
+                            attendee = message.author.nick if message.author.nick != 'None' else message.author
+                            raidDict[raidName]['attendees'].append(str(attendee) + ' ' + msgSplit[3])
+                            msg = raidList(raidDict[raidName], raidName)
+                            await client.send_message(message.channel, msg)
+                        else:
+                            msg = 'That raid is full, contact ' + raidDict[raidName]['author'] + ' or another Raid master for any help.'
+                            await client.send_message(message.channel, msg)
                 else:
-                    msg = 'That raid is full, contact ' + raidDict[raidName]['author'] + ' or another Raid master for any help.'
+                    msg = 'To join a raid, use the following command: !raid join <raidName> <class> \n If your class has more than one word, please abbreviate or make it one word. '
+                    await client.send_message(message.channel, msg)
+            elif command == 'add':
+                #!raid add <raidName> <user> <class>
+                user = msgSplit[3]
+                if len(msgSplit) == 5:
+                    if any(str(user) in element for element in raidDict[raidName]['attendees']):
+                        msg = 'A user by that name has already been added to ' + str(raidName)
+                        await client.send_message(message.channel, msg)
+                    else:
+                        if len(raidDict[raidName]['attendees']) != 10:
+                            raidDict[raidName]['attendees'].append(str(user) + ' ' + msgSplit[4])
+                            msg = raidList(raidDict[raidName], raidName)
+                            await client.send_message(message.channel, msg)
+                        else:
+                            msg = 'That raid is full.'
+                            await client.send_message(message.channel, msg)
+                else:
+                    msg = 'To manually add someone to a raid list use the following command: #!raid add <user> <raidName> <class> \n Example: !raid add Potato Horntail HeavyGunner'
                     await client.send_message(message.channel, msg)
             elif command == 'remove':
                 #!raid remove <raidName>
-                raidDict.pop(msgSpilt[2].lower())
-            elif command == 'clear':
-                #!raid clear
-                raidDict.clear()
+                raidDict.pop(msgSplit[2].lower())
+            elif command == 'list':
+                #!raid list
+                msg = '```Scheduled Raids:\n'
+                for x in raidDict.keys():
+                    msg += str(x) + ' ' + raidDict[x]['time'] +'\n'
+                msg += '```'
+                await client.send_message(message.channel, msg)
             elif command == 'show':
                 #!raid join <raidName>
-                if msgSplit[2].lower() in raidDict:
-                    msg = raidList(raidDict[raidName])
+                if raidName.lower() in raidDict:
+                    msg = raidList(raidDict[raidName], raidName)
                     await client.send_message(message.channel, msg)
                 else:
-                    msg = msgSplit[2] + ' is not a scheduled raid.'
+                    msg = raidName + ' is not a scheduled raid.'
                     await client.send_message(message.channel, msg)
+            elif command == 'help':
+                #!raid help
+                msg = 'Commands: \n !raid join <raidName> <class> - Join a raid specifying class. \n !raid show <raidName> - Shows the details of the specified raid. \n !raid list - Lists all the scheduled raids.'
+                await client.send_message(message.channel, msg)
+            else:
+                msg = '{0.mention}, you have entered an invalid command. The raid commands it goes by the following\n\nTo create: !raid create <raid name> <MM/DD-HH:mmPST> Example: !raid create raid1 cdev 01/31-07:30PST\nTo join: !raid join <raid name> <class>'.format(message.author)
+                await client.send_message(message.channel, msg)
         else:
             if command == 'create':
                 msg = '{0.mention} only those who has the role Raid master can create a listing for raids'.format(message.author)
                 await client.send_message(message.channel, msg)
             elif command == 'join':
                 #!raid join <raidName> <Class>
-                if len(raidDict[raidName]['attendees']) != 10:
-                    raidDict[raidName]['attendees'].append(str(message.author.nick) + ' ' + msgSplit[3])
-                    msg = raidList(raidDict[raidName])
-                    await client.send_message(message.channel, msg)
+                if len(msgSplit) == 4:
+                    if any(str(message.author.nick) in element for element in raidDict[raidName]['attendees']):
+                        msg = 'You have already signed up for that raid. If this is a mistake, contact ' + raidDict[raidName]['author'] + ' or another Raid master for any help.'
+                        await client.send_message(message.channel, msg)
+                    else:
+                        if len(raidDict[raidName]['attendees']) != 10:
+                            attendee = message.author.nick if message.author.nick != 'None' else message.author
+                            raidDict[raidName]['attendees'].append(str(attendee) + ' ' + msgSplit[3])
+                            msg = raidList(raidDict[raidName], raidName)
+                            await client.send_message(message.channel, msg)
+                        else:
+                            msg = 'That raid is full, contact ' + raidDict[raidName]['author'] + ' or another Raid master for any help.'
+                            await client.send_message(message.channel, msg)
                 else:
-                    msg = 'That raid is full, contact ' + raidDict[raidname]['author'].mention + ' or another Raid master for any help.'
+                    msg = 'To join a raid, use the following command: !raid join <raidName> <class> \n If your class has more than one word, please abbreviate or make it one word. '
+                    await client.send_message(message.channel, msg)
                 #Maybe using another key to keep tabs on the amount of people that joined the raid and cannot exceed the number the user specified?
             elif command == 'show':
                 #!raid join <raidName>
@@ -110,8 +156,19 @@ async def on_message(message):
                 else:
                     msg = msgSplit[2] + ' is not a scheduled raid.'
                     await client.send_message(message.channel, msg)
+            elif command == 'list':
+                #!raid list
+                msg = '```Scheduled Raids:\n'
+                for x in raidDict.keys():
+                    msg += str(x) + ' ' + raidDict[x]['time'] +'\n'
+                msg += '```'
+                await client.send_message(message.channel, msg)
+            elif command == 'help':
+                #!raid help
+                msg = 'Commands: \n !raid join <raidName> <class> - Join a raid specifying class. \n !raid show <raidName> - Shows the details of the specified raid. \n !raid list - Lists all the scheduled raids.'
+                await client.send_message(message.channel, msg)
             else:
-                msg = '{0.mention}, you have entered an invalid command. The raid commands it goes by the following\n\nTo create: !raid create <raid name> <boss> <MM/DD-HH:mmPST> Example: !raid create raid1 cdev 01/31-07:30PST\nTo join: !raid join <raid name> <class>'.format(message.author)
+                msg = '{0.mention}, you have entered an invalid command. The raid commands it goes by the following\n\nTo create: !raid create <raid name> <MM/DD-HH:mmPST> Example: !raid create raid1 cdev 01/31-07:30PST\nTo join: !raid join <raid name> <class>'.format(message.author)
                 await client.send_message(message.channel, msg)
     for derogatoryTerms in derogatoryList:
         if derogatoryTerms in message.content:

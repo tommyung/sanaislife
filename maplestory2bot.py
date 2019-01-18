@@ -4,12 +4,14 @@ from oauth2client.service_account import ServiceAccountCredentials
 from discord.ext import commands
 import os
 
+os.environ["token"] = "NDQ0MjY5MzExOTM1MzgxNTI1.DdZd_g.r1Q3qZkNF6ai0fl_vEWfMoEqNBg"
+
 raidDict = {}
 client = discord.Client()
 derogatoryList = ["whore", "nigger", "nigga", "chink", "nigguh", "niggar", "beaner"]
 
-def raidList(raid):
-    returnString = raid['boss'] + ' ' + raid['time'] + ' lead by ' + raid['author'] + '\n'
+def raidList(raid, raidName):
+    returnString = 'Raid Name: ' + raidName + ' ' + raid['time'] + ' lead by ' + raid['author'] + '\n'
     count = 1;
     for x in raid['attendees']:
         returnString += str(count) + '. ' + x + '\n'
@@ -62,16 +64,17 @@ async def on_message(message):
                     raidDict[raidName]['boss'] = str(msgSplit[3].lower())
                     raidDict[raidName]['time'] = str(msgSplit[4].lower())
                     raidDict[raidName]['attendees'] = []
-                    msg = 'A new raid has been created \nName: ' + msgSplit[2]
+                    msg = 'A new raid has been created \nName: ' + raidName
                     await client.send_message(message.channel, msg)
             elif command == 'join':
                 #!raid join <raidName> <Class>
                 if len(raidDict[raidName]['attendees']) != 10:
                     raidDict[raidName]['attendees'].append(str(message.author.nick) + ' ' + msgSplit[3])
-                    msg = raidList(raidDict[raidName])
+                    msg = raidList(raidDict[raidName], raidName)
                     await client.send_message(message.channel, msg)
                 else:
-                    msg = 'That raid is full, contact ' + raidDict[raidname]['author'].mention + ' or another Raid master for any help.'
+                    msg = 'That raid is full, contact ' + raidDict[raidName]['author'] + ' or another Raid master for any help.'
+                    await client.send_message(message.channel, msg)
             elif command == 'remove':
                 #!raid remove <raidName>
                 raidDict.pop(msgSpilt[2].lower())

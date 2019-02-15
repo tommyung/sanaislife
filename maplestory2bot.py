@@ -171,7 +171,7 @@ async def on_message(message):
                 msg = '{0.mention}, you have entered an invalid command. The raid commands it goes by the following\n\nTo create: !raid create <raid name> <MM/DD-HH:mmPST> Example: !raid create raid1 cdev 01/31-07:30PST\nTo join: !raid join <raid name> <class>'.format(message.author)
                 await client.send_message(message.channel, msg)
     for derogatoryTerms in derogatoryList:
-        if derogatoryTerms in message.content:
+        if derogatoryTerms instr(message.content).lower():
             await client.delete_message(message)
 
 @client.event

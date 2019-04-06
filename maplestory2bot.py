@@ -17,7 +17,6 @@ engine = create_engine(DATABASE_URL)
 db = DatabaseConnection(engine)
 metadata = MetaData(bind=engine, reflect=True)
 print("Set DB Connection...")
-#tokenAddress = "MzE5MzgzNjQxMDYwODAyNTYw.XKgwvw.8RzGfkgA5QTlrR4ZJsLgX6tyBrM"
 
 class Raid:
     def __init__(self, name, author, time, maxPpl):

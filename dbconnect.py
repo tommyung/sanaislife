@@ -134,7 +134,6 @@ def main(args):
             print("Goodbye.")
             sys.exit()
 
-
 # Creates table definitions if not already created
 def init_tables(engine):
     Base.metadata.create_all(engine)

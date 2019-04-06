@@ -1,50 +1,22 @@
 import discord
-import datetime
 from oauth2client.service_account import ServiceAccountCredentials
 from discord.ext import commands
-import os
-import sys
-from dbconnect import DatabaseConnection, Query
+import os, sys, traceback, datetime
+from dbconnect import DatabaseConnection, Raid, Attendee
 from sqlalchemy import create_engine, Table, Column, String, Integer, MetaData, ForeignKey
 from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
 
 raidDict = {}
 client = discord.Client()
 derogatoryList = ["whore", "nigger", "nigga", "chink", "nigguh", "niggar", "beaner"]
 tokenAddress = os.environ['token']
 DATABASE_URL = os.environ['DATABASE_URL']
+Base = declarative_base()
 engine = create_engine(DATABASE_URL)
 db = DatabaseConnection(engine)
-metadata = MetaData(bind=engine, reflect=True)
 print("Set DB Connection...")
 
-class Raid:
-    def __init__(self, name, author, time, maxPpl):
-        self.name = name
-        self.author = author
-        self.time = time
-        self.maxPpl = maxPpl
-
-    def get_column_dict(self):
-        return {    
-                    "name": self.name, 
-                    "author": self.author, 
-                    "time": self.time, 
-                    "max_ppl": self.maxPpl
-                }
-
-class Attendee:
-    def __init__(self, raidName, ign, ms_class):
-        self.raidName = raidName
-        self.ign = ign
-        self.ms_class = ms_class
-
-    def get_column_dict(self):
-        return {    
-                    "ign": self.ign, 
-                    "ms_class": self.ms_class,
-                    "raid_name": self.raidName
-                }
 
 def raidList(raid, raidName):
     returnString = '```Raid Name: ' + raidName + ' ' + raid['time'] + ' lead by ' + raid['author'] + '\n'
@@ -87,12 +59,13 @@ async def on_message(message):
         command = msgSplit[1].lower()
         raidName = msgSplit[2].lower() if len(msgSplit) >= 3 else ''
         session = db.create_session()
-        sessionQuery = Query(session, metadata)
         try:
             if 'Raid master' in [y.name for y in message.author.roles]:
                 if command == 'create':
                     #!raid create <raidName> <time>
-                    if msgSplit[2] in raidDict:
+                    allRaids = session.query(Raid).all()
+                    raidNameList = [raid.raid_name for raid in allRaids]
+                    if msgSplit[2] in raidNameList:
                         msg = 'A raid with the name ' + msgSplit[2] + ' already exists.'
                         await client.send_message(message.channel, msg)
                     elif len(msgSplit) not in [4, 5]:
@@ -101,9 +74,13 @@ async def on_message(message):
                     else:
                         author = str(message.author)
                         time = str(msgSplit[3].lower())
-                        maxPpl = str(msgSplit[4].lower()) if len(msgSplit) > 4 else 10
-                        raid = Raid(raidName, author, time, maxPpl)
-                        sessionQuery.insert_raid(raid.get_column_dict())
+                        maxPpl = msgSplit[4].lower()
+                        if (len(msgSplit) == 5):
+                            # Included parameter for max_ppl - overwrite default
+                            session.add(Raid(raid_name=raidName, author=author, time=time, max_ppl=maxPpl))
+                        else: 
+                            session.add(Raid(raid_name=raidName, author=author, time=time))
+                        
                         '''
                         raidDict[raidName] = {}
                         raidDict[raidName]['author'] = str(message.author)
@@ -225,6 +202,7 @@ async def on_message(message):
                     await client.send_message(message.channel, msg)
             session.commit()
         except:
+            print(traceback.format_exc())
             msg = sys.exc_info()[0]
             await client.send_message(message.channel, msg)
             session.rollback()

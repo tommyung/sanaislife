@@ -1,11 +1,40 @@
 import os
 import sys
 from sqlalchemy import create_engine, Table, Column, String, Integer, MetaData, ForeignKey
-from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy.orm import scoped_session, sessionmaker, relationship
+from sqlalchemy.ext.declarative import declarative_base
 import psycopg2
 
 
 DATABASE_URL = os.environ['DATABASE_URL']
+Base = declarative_base()
+
+class Raid(Base):
+    __tablename__ = "raids"
+    raid_name = Column("raid_name", String, primary_key=True, nullable=False)
+    author = Column("author", String, nullable=False)
+    time = Column("time", String, nullable=False)
+    max_ppl = Column("max_ppl", Integer, nullable=False, default=10)
+    attendees = relationship("Attendee", cascade="all, delete-orphan", passive_deletes=True)
+
+    @property
+    def attendees_count(self):
+        return len(self.attendees)
+
+    def __repr__(self):
+        return "<Raid(raid_name='%s', author='%s', time='%s', max_ppl='%d', attendees='%s')>" % (
+                    self.raid_name, self.author, self.time, self.max_ppl, str(self.attendees))
+
+
+class Attendee(Base):
+    __tablename__ = "raidAttendance"
+    unique_id = Column("unique_id", Integer, primary_key=True, autoincrement=True)
+    raid_name = Column("raid_name", String, ForeignKey(Raid.raid_name, ondelete="CASCADE"), nullable=False)
+    ign = Column("ign", String, nullable=False)
+    ms_class = Column("ms_class", String, nullable=False)
+    def __repr__(self):
+        return "<Attendee(unique_id='%d', raid_name='%s', ign='%s', ms_class='%s')>" % (
+                    self.unique_id, self.raid_name, self.ign, self.ms_class)
 
 class DatabaseConnection:
     # Connect to DB on initialization
@@ -21,139 +50,80 @@ class DatabaseConnection:
     def close(self):
         self.conn.close()
 
-
-class Query:
-    def __init__(self, session, metadata):
-        self.session = session
-        self.metadata = metadata
-
-   	# --------------------------------- #
-    #        CRUD FOR TABLE: RAID       #
-   	# --------------------------------- #
-    def insert_raid(self, raidDict):
-    	''' SQL STATEMENT
-        insert into raids (name, author, time, max_ppl) 
-        values (VARCHAR, VARCHAR, VARCHAR, NUMBER)
-    	'''
-        t_raids = self.metadata.tables["raids"]
-        self.session.execute(t_raids.insert(), [raidDict])
-    
-    def update_raid(self, newRaidDict):
-    	''' SQL STATEMENT
-        update raids set author = VARCHAR, time= VARCHAR, max_ppl = NUMBER
-        where name = VARCHAR
-    	'''
-        t_raids = self.metadata.tables["raids"]
-        self.session.execute(t_raids.update().\
-            where(t_raids.c.name == newRaidDict["name"]).\
-            values (    author = newRaidDict["author"], 
-                        time = newRaidDict["time"],
-                        max_ppl = newRaidDict["max_ppl"]
-                    )
-        )
-
-    def delete_raid(self):
-    	''' SQL STATEMENT
-        delete from raids where name = VARCHAR
-    	'''
-        t_raids = self.metadata.tables["raids"]
-
-    def select_raid_by_name(self, raidName):
-        t_raids = self.metadata.tables["raids"]
-
-
-   	# --------------------------------- #
-    #   CRUD FOR TABLE: RAIDATTENDANCE  #
-    # --------------------------------- #
-    def insert_attendee(self, attendeeDict):
-    	''' SQL STATEMENT
-        insert into raidAttendance (raid_name, ign, ms_class) 
-        values (VARCHAR, VARCHAR, VARCHAR)
-    	'''
-        t_raidAttendance = self.metadata.tables["raidAttendance"]
-        self.session.execute(t_raidAttendance.insert(), [attendeeDict])
-        
-    def update_attendee(self, newAttendeeDict):
-    	''' SQL STATEMENT
-        update raidAttendance set ign = VARCHAR, ms_class = VARCHAR
-        where raid_name = VARCHAR
-    	'''
-        t_raidAttendance = self.metadata.tables["raidAttendance"]
-        self.session.execute(t_raidAttendance.update().\
-            where(t_raidAttendance.c.raid_name == newAttendeeDict["raid_name"]).\
-            values (    ign = newAttendeeDict["ign"], 
-                        ms_class = newAttendeeDict["ms_class"]
-                    )
-        )
-
-    def delete_attendee(self):
-    	''' SQL STATEMENT
-        delete from raidAttendance where raid_name = VARCHAR and ign = VARCHAR
-    	'''
-        t_raidAttendance = self.metadata.tables["raidAttendance"]
-    def select_attendees_by_raid(self):
-        t_raidAttendance = self.metadata.tables["raidAttendance"]
-
-
-
-class Raid:
-    def __init__(self, name, author, time, maxPpl):
-        self.name = name
-        self.author = author
-        self.time = time
-        self.maxPpl = maxPpl
-
-    def get_column_dict(self):
-        return {    
-                    "name": self.name, 
-                    "author": self.author, 
-                    "time": self.time, 
-                    "max_ppl": self.maxPpl
-                }
-
-class Attendee:
-    def __init__(self, raidName, ign, ms_class):
-        self.raidName = raidName
-        self.ign = ign
-        self.ms_class = ms_class
-
-    def get_column_dict(self):
-        return {    
-                    "ign": self.ign, 
-                    "ms_class": self.ms_class,
-                    "raid_name": self.raidName
-                }
-
-    
-
 # You can run dbconnect.py on it's own with "initTables" argument to initialize creation of tables
 # or put any queries in the else statement that you want to test.
+# NOTE: DO NOT RUN dbconnect.py AS ITS OWN SCRIPT ON LIVE SERVER - it'll wipe the data and then run these example queries
 def main(args):
     engine = create_engine(DATABASE_URL)
-    if (len(args) > 0 and args[0] == "initTables"):
-        print("init tables")
-        init_tables(engine)
+    if (len(args) > 0):
+        if (args[0] == "initTables"):
+            print("Creating tables")
+            init_tables(engine)
+        elif (args[0] == "dropTables"):
+            print("TO DO: Deleting tables & data")
+            drop_tables(engine)
     else :
         db = DatabaseConnection(engine)
-        metadata = MetaData(bind=engine, reflect=True)
         session = db.create_session()
-        sessionQuery = Query(session, metadata)
-        '''   
-        # Raid Test Queries
-        raid = Raid("imsquibbo2", "me", "7pm", 7)
-        sessionQuery.insert_raid(raid.get_column_dict())
-        raid = Raid("name", "me2", "5pm", 7)
-        sessionQuery.update_raid(raid.get_column_dict())
-        session.execute(t_raids.insert(), [raid.get_column_dict()])
-        '''
 
+        ''' WIPING THE DB Data - not dropping the tables: Attendees will delete by cascade on deletion of raid '''
+        session.query(Raid).delete()
+
+        ''' 
+        EXAMPLE USAGE OF QUERIES I THINK WE'LL NEED
+        Reference for available Query methods: https://docs.sqlalchemy.org/en/latest/orm/query.html
         '''
-        # Attendee Test Queries
-        attendee = Attendee("imsquibbo2", "kerro", "archer")
-        sessionQuery.insert_attendee(attendee.get_column_dict())
-        '''
-        attendee = Attendee("imsquibbo2", "Zukoori", "rb")
-        sessionQuery.update_attendee(attendee.get_column_dict())
+        print("Creating raids: '7man cdev' and 'CPAP'\n")
+        session.add(Raid(raid_name="7man cdev", author="wassup", time="some time", max_ppl=7))
+        session.add(Raid(raid_name="CPAP", author="abcd", time="anytime"))
+
+        print("Adding attendee, Zukoori and Calendar, to raid: '7man cdev'\n")
+        session.add(Attendee(raid_name="7man cdev", ign="Zukoori", ms_class="rb"))
+        session.add(Attendee(raid_name="7man cdev", ign="Calendar", ms_class="priest"))
+        print("Adding attendee, kerro, to raid: 'CPAP'\n")
+        session.add(Attendee(raid_name="CPAP", ign="kerro", ms_class="archer"))
+
+        print("Updating attendee ign and class: Zukoori - rb --> kerro - archer\n")
+        session.query(Attendee)\
+                .filter_by(raid_name="7man cdev", ign="Zukoori")\
+                .update({"ign": "kerro", "ms_class":"archer"}, synchronize_session="fetch")
+
+        print("Select for all raids")
+        allRaids = session.query(Raid).all()
+        print(allRaids, "\n")
+
+        print("Printing all raid names from this query")
+        allRaidNames = [raid.raid_name for raid in allRaids]
+        print(allRaidNames, "\n")
+
+
+        print("Select for raid details: '7man cdev'")
+        # The attendees attribute will be a list of Attendees so can use the same query to get a list of everyone who's going
+        raidDetailsExample = session.query(Raid)\
+                               .filter_by(raid_name="7man cdev")\
+                               .first()
+        print(raidDetailsExample, "\n")
+
+        print("Who's going to '7man cdev'?")
+        attendeesList = [" - ".join([attendee.ign, attendee.ms_class]) for attendee in raidDetailsExample.attendees]
+        print(attendeesList, "\n")
+        print("How many people are going to '7man cdev' so far?")
+        print(raidDetailsExample.attendees_count, "\n")
+
+        print("Select for one attendee's details: 'kerro - 7man cdev'\n")
+        attendeeDetailsExample = session.query(Attendee)\
+                               .filter_by(raid_name="7man cdev", ign="kerro")\
+                               .first()
+        print(attendeeDetailsExample)
+
+        print("Deleting an attendee from a raid: no kerro you can't go CPAP\n")
+        session.query(Attendee)\
+                .filter_by(raid_name="CPAP", ign="kerro")\
+                .delete()
+
+        print("Deleting raid '7man cdev' - should delete associated attendees automatically\n")
+        session.query(Raid).filter_by(raid_name="7man cdev").delete()
+
         session.commit()
         session.close()
         db.close()
@@ -161,30 +131,12 @@ def main(args):
 
 # Creates table definitions if not already created
 def init_tables(engine):
-    metadata = MetaData(engine)
-    
-    if not engine.has_table(engine, "raids"):
-    # One to one
-        raids = Table("raids", metadata,
-            Column("name", String, primary_key=True, nullable=False),
-            Column("author", String, nullable=False),
-            Column("time", String, nullable=False),
-            Column("max_ppl", Integer, nullable=False)
-        )
+    Base.metadata.create_all(engine)
+    for _t in Base.metadata.tables:
+        print("Exists Table: ", _t)
 
-    if not engine.has_table(engine, "raidAttendance"):
-        # One raid to many attendees
-        raidAttendance = Table("raidAttendance", metadata,
-            Column("raid_name", String, ForeignKey("raids.name"), nullable=False),
-            Column("ign", String, nullable=False),
-            Column("ms_class", String, nullable=False)
-        )
-
-    metadata.create_all()
-    for _t in metadata.tables:
-        print("Created Table: ", _t)
-
-
+def drop_tables(engine):
+    pass
 
 if __name__ == "__main__":
     main(sys.argv[1:])

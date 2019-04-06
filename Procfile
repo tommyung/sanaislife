@@ -1,2 +1,1 @@
-#worker: python maplestory2bot.py
-worker: python dbconnect.py
+worker: python maplestory2bot.p

@@ -62,71 +62,77 @@ def main(args):
         elif (args[0] == "dropTables"):
             print("TO DO: Deleting tables & data")
             drop_tables(engine)
-    else :
-        db = DatabaseConnection(engine)
-        session = db.create_session()
+    else:
+        confirmContinue = input("This script run on its own will wipe the data, and run the example queries." +
+                                "\nAre you sure you want to run this script on it's own? (Y/N): ")
+        if (confirmContinue == "Y"):
+            db = DatabaseConnection(engine)
+            session = db.create_session()
 
-        ''' WIPING THE DB Data - not dropping the tables: Attendees will delete by cascade on deletion of raid '''
-        session.query(Raid).delete()
+            ''' WIPING THE DB Data - not dropping the tables: Attendees will delete by cascade on deletion of raid '''
+            session.query(Raid).delete()
 
-        ''' 
-        EXAMPLE USAGE OF QUERIES I THINK WE'LL NEED
-        Reference for available Query methods: https://docs.sqlalchemy.org/en/latest/orm/query.html
-        '''
-        print("Creating raids: '7man cdev' and 'CPAP'\n")
-        session.add(Raid(raid_name="7man cdev", author="wassup", time="some time", max_ppl=7))
-        session.add(Raid(raid_name="CPAP", author="abcd", time="anytime"))
+            ''' 
+            EXAMPLE USAGE OF QUERIES I THINK WE'LL NEED
+            Reference for available Query methods: https://docs.sqlalchemy.org/en/latest/orm/query.html
+            '''
+            print("Creating raids: '7man cdev' and 'CPAP'\n")
+            session.add(Raid(raid_name="7man cdev", author="wassup", time="some time", max_ppl=7))
+            session.add(Raid(raid_name="CPAP", author="abcd", time="anytime"))
 
-        print("Adding attendee, Zukoori and Calendar, to raid: '7man cdev'\n")
-        session.add(Attendee(raid_name="7man cdev", ign="Zukoori", ms_class="rb"))
-        session.add(Attendee(raid_name="7man cdev", ign="Calendar", ms_class="priest"))
-        print("Adding attendee, kerro, to raid: 'CPAP'\n")
-        session.add(Attendee(raid_name="CPAP", ign="kerro", ms_class="archer"))
+            print("Adding attendee, Zukoori and Calendar, to raid: '7man cdev'\n")
+            session.add(Attendee(raid_name="7man cdev", ign="Zukoori", ms_class="rb"))
+            session.add(Attendee(raid_name="7man cdev", ign="Calendar", ms_class="priest"))
+            print("Adding attendee, kerro, to raid: 'CPAP'\n")
+            session.add(Attendee(raid_name="CPAP", ign="kerro", ms_class="archer"))
 
-        print("Updating attendee ign and class: Zukoori - rb --> kerro - archer\n")
-        session.query(Attendee)\
-                .filter_by(raid_name="7man cdev", ign="Zukoori")\
-                .update({"ign": "kerro", "ms_class":"archer"}, synchronize_session="fetch")
+            print("Updating attendee ign and class: Zukoori - rb --> kerro - archer\n")
+            session.query(Attendee)\
+                    .filter_by(raid_name="7man cdev", ign="Zukoori")\
+                    .update({"ign": "kerro", "ms_class":"archer"}, synchronize_session="fetch")
 
-        print("Select for all raids")
-        allRaids = session.query(Raid).all()
-        print(allRaids, "\n")
+            print("Select for all raids")
+            allRaids = session.query(Raid).all()
+            print(allRaids, "\n")
 
-        print("Printing all raid names from this query")
-        allRaidNames = [raid.raid_name for raid in allRaids]
-        print(allRaidNames, "\n")
+            print("Printing all raid names from this query")
+            allRaidNames = [raid.raid_name for raid in allRaids]
+            print(allRaidNames, "\n")
 
 
-        print("Select for raid details: '7man cdev'")
-        # The attendees attribute will be a list of Attendees so can use the same query to get a list of everyone who's going
-        raidDetailsExample = session.query(Raid)\
-                               .filter_by(raid_name="7man cdev")\
-                               .first()
-        print(raidDetailsExample, "\n")
+            print("Select for raid details: '7man cdev'")
+            # The attendees attribute will be a list of Attendees so can use the same query to get a list of everyone who's going
+            raidDetailsExample = session.query(Raid)\
+                                   .filter_by(raid_name="7man cdev")\
+                                   .first()
+            print(raidDetailsExample, "\n")
 
-        print("Who's going to '7man cdev'?")
-        attendeesList = [" - ".join([attendee.ign, attendee.ms_class]) for attendee in raidDetailsExample.attendees]
-        print(attendeesList, "\n")
-        print("How many people are going to '7man cdev' so far?")
-        print(raidDetailsExample.attendees_count, "\n")
+            print("Who's going to '7man cdev'?")
+            attendeesList = [" - ".join([attendee.ign, attendee.ms_class]) for attendee in raidDetailsExample.attendees]
+            print(attendeesList, "\n")
+            print("How many people are going to '7man cdev' so far?")
+            print(raidDetailsExample.attendees_count, "\n")
 
-        print("Select for one attendee's details: 'kerro - 7man cdev'\n")
-        attendeeDetailsExample = session.query(Attendee)\
-                               .filter_by(raid_name="7man cdev", ign="kerro")\
-                               .first()
-        print(attendeeDetailsExample)
+            print("Select for one attendee's details: 'kerro - 7man cdev'\n")
+            attendeeDetailsExample = session.query(Attendee)\
+                                   .filter_by(raid_name="7man cdev", ign="kerro")\
+                                   .first()
+            print(attendeeDetailsExample)
 
-        print("Deleting an attendee from a raid: no kerro you can't go CPAP\n")
-        session.query(Attendee)\
-                .filter_by(raid_name="CPAP", ign="kerro")\
-                .delete()
+            print("Deleting an attendee from a raid: no kerro you can't go CPAP\n")
+            session.query(Attendee)\
+                    .filter_by(raid_name="CPAP", ign="kerro")\
+                    .delete()
 
-        print("Deleting raid '7man cdev' - should delete associated attendees automatically\n")
-        session.query(Raid).filter_by(raid_name="7man cdev").delete()
+            print("Deleting raid '7man cdev' - should delete associated attendees automatically\n")
+            session.query(Raid).filter_by(raid_name="7man cdev").delete()
 
-        session.commit()
-        session.close()
-        db.close()
+            session.commit()
+            session.close()
+            db.close()
+        else:
+            print("Goodbye.")
+            sys.exit()
 
 
 # Creates table definitions if not already created

@@ -92,7 +92,8 @@ async def on_message(message):
         # Example Split: ['!raid create', 'raidname="7 man cdev"', 'day="Saturday"', 'date="April 6"', 'time="7 PM"', 'max_ppl=10']
         msgContent = message.content
         msgSplit = msgContent.split(" --")
-        command = msgSplit[0].lstrip("!raid ")
+        commandRe = re.compile("!raid (.+)")
+        command = commandRe.match(msgSplit[0]).group(1)
         argumentList = msgSplit[1:]
         argDict = convertToArgDict(argumentList)
         print(msgContent)
@@ -295,13 +296,8 @@ async def on_message(message):
                         msg = argDict["raidname"] + " is not a scheduled raid."
                         await client.send_message(message.channel, msg)
                     else:
-                        displayRaid(raid)
-                        if msgSplit[2].lower() in raidDict:
-                            msg = raidList(raidDict[raidName])
-                            await client.send_message(message.channel, msg)
-                        else:
-                            msg = msgSplit[2] + ' is not a scheduled raid.'
-                            await client.send_message(message.channel, msg)
+                        msg += displayRaid(raid)
+                        await client.send_message(message.channel, msg)
 
             elif command == "list":
                 # !raid list

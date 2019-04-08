@@ -208,7 +208,8 @@ async def on_message(message):
         # Example Split: ['!raid join', 'raidname="7 man cdev"', 'ign="Zukoori"', 'class="runeblader"']
         msgContent = message.content
         msgSplit = msgContent.split(" --")
-        command = msgSplit[0].lstrip("!raid ")
+        commandRe = re.compile("!raid (.+)")
+        command = commandRe.match(msgSplit[0]).group(1)
         argumentList = msgSplit[1:]
         argDict = convertToArgDict(argumentList)
         print(argDict)

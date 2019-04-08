@@ -1,7 +1,7 @@
 import discord
 from oauth2client.service_account import ServiceAccountCredentials
 from discord.ext import commands
-import os, sys, traceback, datetime
+import os, sys, traceback, datetime, re
 from datetime import timedelta
 from dbconnect import DatabaseConnection, Raid, Attendee
 from sqlalchemy import create_engine, Table, Column, String, Integer, MetaData, ForeignKey

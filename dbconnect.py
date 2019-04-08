@@ -1,6 +1,7 @@
 import os, sys, datetime, traceback
 from sqlalchemy import create_engine, Table, Column, String, Integer, MetaData, ForeignKey, DateTime
 from sqlalchemy.orm import scoped_session, sessionmaker, relationship
+from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.ext.declarative import declarative_base
 import psycopg2
 

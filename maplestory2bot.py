@@ -6,6 +6,7 @@ from datetime import timedelta
 from dbconnect import DatabaseConnection, Raid, Attendee
 from sqlalchemy import create_engine, Table, Column, String, Integer, MetaData, ForeignKey
 from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.ext.declarative import declarative_base
 import psycopg2
 
@@ -24,8 +25,8 @@ def displayRaid(raid):
     returnString = '```md\n'
     returnString += raid.raid_name + '\n<' + raid.day + ' ' + raid.date + ' @ ' + raid.time + '>\n'
     count = 1
-    for attendeee in raid.attendees:
-        returnString += str(count) + '. ' + attendee.ign + '\n'
+    for attendee in raid.attendees:
+        returnString += str(count) + '. ' + attendee.ign + ' - ' + attendee.ms_class + '\n'
         count += 1
     remainingSpots = raid.max_ppl - raid.attendees_count
     if remainingSpots > 0:
@@ -110,9 +111,11 @@ async def on_message(message):
                 print (raidNameList)
                 if len(argumentList) not in [4, 5] or any([key not in acceptableArgs for key in argDict.keys()]):
                     # Invalid arguments
-                    msg = ('${0.mention}, you have entered an invalid command. To create a raid, follow this format:' +
+                    # Test wrong num args: !raid create --raidname="num arg test"
+                    # Test mispelled params: !raid create --raidname="mispell test" --dya="Saturday" --date="April 6" --time="7 PM"
+                    msg = (message.author.mention + ', you have entered an invalid command. To create a raid, follow this format:' +
                             '\n !raid create --raidname="7 man cdev" --day="Saturday" --date="April 6" --time="7 PM" --max_ppl=7' +
-                            '\n The "--max_ppl" is optional and can be left off to default to 10.')
+                            '\n\n The "--max_ppl" is optional and can be left off to default to 10.')
                     await client.send_message(message.channel, msg)
                 elif argDict["raidname"] in raidNameList:
                     # Raid name already exists
@@ -120,6 +123,8 @@ async def on_message(message):
                     await client.send_message(message.channel, msg)
                 elif len(argumentList) == 5 and (argDict["max_ppl"] > 10 or argDict["max_ppl"] < 4):
                     # Invalid max_ppl ( 4 <= max_ppl <= 10)
+                    # Test > 10: !raid create --raidname="mispell test" --day="Saturday" --date="April 6" --time="7 PM" --max_ppl=11
+                    # Test < 4: !raid create --raidname="mispell test" --day="Saturday" --date="April 6" --time="7 PM" --max_ppl=3
                     msg = "Sorry. You can't create a raids with more than 10 or less than 4 members."
                     await client.send_message(message.channel, msg)
                 else:
@@ -127,7 +132,7 @@ async def on_message(message):
                     try:
                         if (len(argumentList) == 5):
                             # Included parameter for max_ppl - overwrite default of 10
-                            raid = Raid(raid_name=argDict["raidname"], day=argDict["day"], date=argDict["date"], time=argDict["time"], max_ppl=argDict["max_ppl"], created_by=str(message.author))
+                            raid = Raid(raid_name=argDict["raidname"], day=argDict["day"], date=argDict["date"], time=argDict["time"], max_ppl=argDict["max_ppl"], created_by=str(message.author))                        
                             session.add(raid)
                         else: 
                             raid = Raid(raid_name=argDict["raidname"], day=argDict["day"], date=argDict["date"], time=argDict["time"], created_by=str(message.author))
@@ -137,6 +142,8 @@ async def on_message(message):
                         msg = "Couldn't save to the database... Ionno what to say."
                         await client.send_message(message.channel, msg)
                     else:
+                        # Added to DB by default but needed in the object for display purposes
+                        raid.max_ppl = 10 if "max_ppl" not in argDict.keys() else argDict["max_ppl"]
                         msg = "Raid '" + argDict["raidname"] + "' was created:\n"
                         msg += displayRaid(raid)
                         await client.send_message(message.channel, msg)
@@ -146,9 +153,10 @@ async def on_message(message):
                 acceptableArgs = ["oldRaidname", "raidname", "day", "date", "time", "max_ppl"] 
                 if (len(argumentList) < 1) or ("oldRaidname" not in argDict.keys()) or (any([key not in acceptableArgs for key in argDict.keys()])):
                     # Invalid arguments
-                    msg = ('${0.mention}, you have entered an invalid command. To update a raid, follow this format:' +
+                    # Test wrong arguments: !raid updateRaid --raidname="4 man cdev" --day="Sunday" --date="April 7" --time="8 PM" --max_ppl=4
+                    msg = (message.author.mention + ', you have entered an invalid command. To update a raid, follow this format:' +
                             '\n !raid updateRaid --oldRaidname="7 man cdev" --raidname="4 man cdev" --day="Sunday" --date="April 7" --time="8 PM" --max_ppl=4' +
-                            "\n oldRaidname and one other option is required. If you leave out an optional value, it'll stay the same as the old value.")
+                            "\n\n oldRaidname and one other option is required. If you leave out an optional value, it'll stay the same as the old value.")
                     await client.send_message(message.channel, msg)
                 else:
                     # For parameter to column mapping
@@ -157,13 +165,23 @@ async def on_message(message):
                     # Updating the values that were listed
                     oldRaidname = remappedArgDict.pop("oldRaidname")
                     session.query(Raid).filter_by(raid_name=oldRaidname).update(remappedArgDict, synchronize_session="fetch")
+                    currentRaidname = remappedArgDict["raid_name"] if "raid_name" in remappedArgDict else oldRaidname
+                    try:
+                        updatedRaid = session.query(Raid).filter_by(raid_name=currentRaidname).one()
+                    except NoResultFound:
+                        msg = "That raid doesn't seem to exist. Is it in '!raid list'?"
+                        await client.send_message(message.channel, msg)
+                    else:
+                        msg = "Successfully updated the raid '" + oldRaidname + "' to: "
+                        msg += displayRaid(updatedRaid)
+                        await client.send_message(message.channel, msg)
 
             elif command == 'delete':
                 # !raid delete --raidname="7 man cdev"
                 acceptableArgs = ["raidname"]
                 if len(argumentList) != 1 or any([key not in acceptableArgs for key in argDict.keys()]):
                     # Invalid arguments
-                    msg = ('${0.mention}, you have entered an invalid command. To delete a raid, follow this format:' +
+                    msg = (message.author.mention + ', you have entered an invalid command. To delete a raid, follow this format:' +
                             '\n !raid delete --raidname="7 man cdev"')
                     await client.send_message(message.channel, msg)
                 else:
@@ -220,14 +238,13 @@ async def on_message(message):
                 acceptableArgs = ["raidname", "ign", "class"]
                 if len(argumentList) != 3 or any([key not in acceptableArgs for key in argDict.keys()]):
                     # Invalid arguments
-                    msg = ('${0.mention}, you have entered an invalid command. To join a raid, follow this format:' +
+                    msg = (message.author.mention + ', you have entered an invalid command. To join a raid, follow this format:' +
                             '\n !raid join --raidname="7 man cdev" --ign="Zukoori" --class="runeblader"')
                     await client.send_message(message.channel, msg)
                 else:
                     try:
                         raidDetails = session.query(Raid).filter_by(raid_name=argDict["raidname"]).one()
                     except NoResultFound:
-                        print(traceback.format_exc())
                         msg = "Couldn't find that raid. Tiff, check your typos."
                         await client.send_message(message.channel, msg)   
                     else:
@@ -249,44 +266,69 @@ async def on_message(message):
             elif command == "updatePerson":
                 #!raid updatePerson --raidname="7 man cdev" --oldIgn="Liatris" --ign="Calendula" --class="calendar"
                 acceptableArgs = ["raidname", "oldIgn", "ign", "class"]
-                if (len(argumentList) < 1) or ("oldRaidname" not in argDict.keys()) or (any([key not in acceptableArgs for key in argDict.keys()])):
+                if (len(argumentList) < 1) or ("oldIgn" not in argDict.keys()) or (any([key not in acceptableArgs for key in argDict.keys()])):
                     # Invalid arguments
-                    msg = ('${0.mention}, you have entered an invalid command. To update a raid, follow this format:' +
-                            '\n !raid updateRaid --oldRaidname="7 man cdev" --raidname="4 man cdev" --day="Sunday" --date="April 7" --time="8 PM" --max_ppl=4' +
-                            "\n oldRaidname and one other option is required. If you leave out an optional value, it'll stay the same as the old value.")
+                    msg = (message.author.mention + ', you have entered an invalid command. To update a raid, follow this format:' +
+                            '\n !raid updatePerson --raidname="7 man cdev" --oldIgn="Liatris" --ign="Calendula" --class="calendar"' +
+                            "\n oldIgn and one other option is required. If you leave out an optional value, it'll stay the same as the old value.")
                     await client.send_message(message.channel, msg)
                 else:
-                    # For parameter to column mapping
-                    colMapping = {      "raidname" : "raid_name",
-                                        "class" : "ms_class"        }
-                    remappedArgDict = mapArgToCol(argDict, colMapping)
-                    # Updating the values that were listed
-                    oldIgn = remappedArgDict.pop("oldIgn")
-                    session.query(Attendee).filter_by(ign=oldIgn).update(remappedArgDict, synchronize_session="fetch")
+                    try:
+                        raidAttendee = session.query(Attendee).filter_by(raid_name=argDict["raidname"],ign=argDict["oldIgn"]).one()
+                    except NoResultFound:
+                        msg = "Don't think you're listed in this raid..."
+                        await client.send_message(message.channel, msg) 
+                    else:
+                        if (raidAttendee.added_by != str(message.author)) or ('Raid master' not in [y.name for y in message.author.roles]):
+                            # You can only update if you're the person who added the attendee or you're a raid master  
+                            msg = "New phone... who dis? You can only update an attendee if you're a raid master or the person who added them... and you aren't... spits."
+                            await client.send_message(message.channel, msg)
+                        else:
+                            # For parameter to column mapping
+                            colMapping = {      "raidname" : "raid_name",
+                                                "class" : "ms_class"        }
+                            remappedArgDict = mapArgToCol(argDict, colMapping)
+                            # Updating the values that were listed
+                            oldIgn = remappedArgDict.pop("oldIgn")
+                            session.query(Attendee).filter_by(raid_name=remappedArgDict["raid_name"],ign=oldIgn).update(remappedArgDict, synchronize_session="fetch")
+                            msg = "Successfully updated '" + oldIgn + "' in the raid, " + argDict["raidname"] + ", with the following details:\n"
+                            for key, value in argDict.items():
+                                if (key in ["oldIgn", "raidname"]):
+                                    continue
+                                msg += key + ": " + value + "\n"
+                            await client.send_message(message.channel, msg)
                                         
             elif command == "byebye":
-                # !raid byebye --raidname="7 man cdev" --ign="Zukoori"
+                # !raid byebye --raidname="7 man cdev" --ign="Stronk Oolong"
                 acceptableArgs = ["raidname", "ign"]
-                if 'Raid master' not in [y.name for y in message.author.roles]:
-                    msg = "New phone... who dis? You can only remove an attendee if you're a raid master... and you aren't... spits."
-                    await client.send_message(message.channel, msg)
-                elif len(argumentList) != 2  or any([key not in acceptableArgs for key in argDict.keys()]):
+                if len(argumentList) != 2  or any([key not in acceptableArgs for key in argDict.keys()]):
                     # Invalid arguments
-                    msg = ('${0.mention}, you have entered an invalid command. To remove a person from the raid, follow this format:' +
+                    msg = (message.author.mention + ', you have entered an invalid command. To remove a person from the raid, follow this format:' +
                             '\n !raid byebye --raidname="7 man cdev" --ign="Zukoori"')
                     await client.send_message(message.channel, msg)
                 else:
-                    # Removing the attendee from the raid
-                    session.query(Attendee).filter_by(raid_name=argDict["raidname"], ign=argDict["ign"]).delete()
-                    msg = "Bye bye " + argDict["ign"] + ". You've been removed from the raid: " + argDict["raidname"]
-                    await client.send_message(message.channel, msg)
+                    try:
+                        raidAttendee = session.query(Attendee).filter_by(raid_name=argDict["raidname"],ign=argDict["ign"]).one()
+                    except NoResultFound:
+                        msg = "Don't think they're listed in this raid..."
+                        await client.send_message(message.channel, msg) 
+                    else:
+                        if (raidAttendee.added_by != str(message.author)) or ('Raid master' not in [y.name for y in message.author.roles]):
+                            # You can only update if you're the person who added the attendee or you're a raid master  
+                            msg = "New phone... who dis? You can only remove an attendee if you're a raid master or the preson who added them... and you aren't... spits."
+                            await client.send_message(message.channel, msg)
+                        else:
+                            # Removing the attendee from the raid
+                            session.query(Attendee).filter_by(raid_name=argDict["raidname"], ign=argDict["ign"]).delete()
+                            msg = "Bye bye " + argDict["ign"] + ". You've been removed from the raid: " + argDict["raidname"]
+                            await client.send_message(message.channel, msg)
 
             elif command == "show":
                 # !raid show --raidname="cdev 7 man"
                 acceptableArgs = ["raidname"]
                 if len(argumentList) != 1 or any([key not in acceptableArgs for key in argDict.keys()]):
                     # Invalid arguments
-                    msg = ('${0.mention}, you have entered an invalid command. To show a raid, follow this format:' +
+                    msg = (message.author.mention + ', you have entered an invalid command. To show a raid, follow this format:' +
                             '\n !raid show --raidname="cdev 7 man"')
                     await client.send_message(message.channel, msg)
                 else:
@@ -297,7 +339,7 @@ async def on_message(message):
                         msg = argDict["raidname"] + " is not a scheduled raid."
                         await client.send_message(message.channel, msg)
                     else:
-                        msg += displayRaid(raid)
+                        msg = displayRaid(raid)
                         await client.send_message(message.channel, msg)
 
             elif command == "list":
@@ -415,7 +457,7 @@ raidHelpStr3 = ("**join a raid**\n" +
                 "Examples:\n" +
                 '!raid updatePerson --raidname="7 man cdev" --oldIgn="Liatris" --ign="Calendula" --class="calendar"\n' +
                 "\nChannel and role restrictions: \n" +
-                "[#clear-runs, #practice-runs][any role - must be the same person who used the !raid join]\n" +
+                "[#clear-runs, #practice-runs][any role - must be the same person who used the !raid join or a raid master]\n" +
                 "\nRequired Options (Will keep old values if not provided):\n" +
                 "[--raidname][--oldIgn] & at least one of the following: [--ign][--class]\n" +
                 "----\n" +
@@ -425,7 +467,7 @@ raidHelpStr3 = ("**join a raid**\n" +
                 "Examples:\n" +
                 '!raid byebye --raidname="7 man cdev" --ign="SenjiNO"\n' +
                 "\nChannel and role restrictions: \n" +
-                "[#clear-runs, #practice-runs][Raid master]\n" +
+                "[#clear-runs, #practice-runs][any role - must be the same person who used the !raid join or a raid master]\n" +
                 "\nRequired Options:\n" +
                 "[--raidname][--ign]\n" +
                 "----\n" +

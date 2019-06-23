@@ -78,7 +78,7 @@ async def on_message(message):
             upcomingBoss = "-----Upcoming Bosses for XX:45-----\n" + worldBossList[5][0] + "\n" + worldBossList[5][1] + "```"
         elif int(timeBoss) >= int(worldBossTime[5]) and int(timeBoss) <= int(worldBossTime[5] + 9):
             bossList = "```" + "-----Active Bosses for XX:40 -----\n" + worldBossList[4][0] +"-----Active Bosses for XX:45-----\n" + worldBossList[5][0] + "\n" + worldBossList[5][1] + "\n\n"
-            upcomingBoss = "-----Upcoming Bosses for XX:55-----\n" + worldBossList[6][0] + "\n" + worldBossList[6][1] + "\n" + worldBossList[6][2] + "```"
+            upcomingBoss = "\n-----Upcoming Bosses for XX:55-----\n" + worldBossList[6][0] + "\n" + worldBossList[6][1] + "\n" + worldBossList[6][2] + "```"
         else:
             bossList = "```-----Active Bosses for XX:55-----\n" + worldBossList[6][0] + "\n" + worldBossList[6][1] + "\n" + worldBossList[6][2] + "\n\n"
             upcomingBoss = "-----Upcoming Bosses for XX:05-----\n" + worldBossList[0][0] + "\n" + worldBossList[0][1] + "\n" + worldBossList[0][2] + "\n" + worldBossList[0][3] + "\n" + worldBossList[0][4] + "```"

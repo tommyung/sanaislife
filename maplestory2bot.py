@@ -10,6 +10,14 @@ from sqlalchemy.ext.declarative import declarative_base
 raidDict = {}
 client = discord.Client()
 derogatoryList = ["whore", "nigger", "nigga", "chink", "nigguh", "niggar", "beaner"]
+worldBossTime = [5, 15, 25, 35, 40, 45, 55]
+worldBossList = [["Acreon - Lavendar Island", "Doondun - Kerning Junkyard", "Furious Baphomet - Mirror Castle", "Ikar Morde - Frozencrest", "Lo and Moomoo - Baum Tree"],
+                 ["Griffin - Frostheart", "Heartless Baphomet - Frostpeak Mountain", "Ureus - Nazkar Pyramid"],
+                 ["Griffina - Trinian Crossing", "Toh and Googoo - Whistler Cliffs"],
+                 ["Vayar Gatekeeper - Precipice Fortress", "Giant Turtle - Beachway 111"],
+                 ["Aplha Turtle - Ellua Riverside"],
+                 ["Lernos - Twilight Moon Castle", "MK 52 Alpha Bot - Neuron DNA Research Center"],
+                 ["Amadon - Ludari Arena", "Devilin Warrior - South Royal Road", "Pekanos - Fractured Canyon"]]
 tokenAddress = os.environ['token']
 DATABASE_URL = os.environ['DATABASE_URL']
 Base = declarative_base()
@@ -47,7 +55,36 @@ async def on_message(message):
         msg = str(msgContent).format(message)
         await client.send_message(message.channel, msg)
 
-
+    if message.content.startswith('!boss'):
+        msgTime = datetime.datetime.now().time()
+        timeSplit = (str(msgTime).split(':'))
+        timeBoss = int(timeSplit[1])
+        bossList = None
+        upcomingBoss = None
+        if int(timeBoss) >= int(worldBossTime[0]) and int(timeBoss) <= int(worldBossTime[0] + 9):
+            bossList = "```-----Active Bosses for XX:05-----\n" + worldBossList[0][0] + "\n" + worldBossList[0][1] + "\n" + worldBossList[0][2] + "\n" + worldBossList[0][3] + "\n" + worldBossList[0][4] + "\n\n"
+            upcomingBoss = "-----Upcoming Bosses for XX:15-----\n" + worldBossList[1][0] + "\n" + worldBossList[1][1] + "\n" + worldBossList[1][2] + "```"
+        elif int(timeBoss) >= int(worldBossTime[1]) and int(timeBoss) <= int(worldBossTime[1] + 9):
+            bossList = "```-----Active Bosses for XX:15-----\n" + worldBossList[1][0] + "\n" + worldBossList[1][1] + "\n" + worldBossList[1][2] + "\n\n"
+            upcomingBoss = "-----Upcoming Bosses for XX:25-----\n" + worldBossList[2][0] + "\n" + worldBossList[2][1] + "```"
+        elif int(timeBoss) >= int(worldBossTime[2]) and int(timeBoss) <= int(worldBossTime[2] + 9):
+            bossList = "```-----Active Bosses for XX:25-----\n" + worldBossList[2][0] + "\n" + worldBossList[2][1] + "\n\n"
+            upcomingBoss = "-----Upcoming Bosses for XX:35-----\n" + worldBossList[3][0] + "\n" + worldBossList[3][1] + "```"
+        elif int(timeBoss) >= int(worldBossTime[3]) and int(timeBoss) <= int(worldBossTime[3] + 9):
+            bossList = "```-----Active Bosses for XX:35-----\n" + worldBossList[3][0] + "\n" + worldBossList[3][1] + "\n\n"
+            upcomingBoss = "-----Upcoming Bosses for XX:40-----\n" + worldBossList[4][0] + "\n\n" + "```"
+        elif int(timeBoss) >= int(worldBossTime[4]) and int(timeBoss) <= int(worldBossTime[4] + 9):
+            bossList = "```-----Active Bosses for XX:40 -----\n" + worldBossList[4][0] + "\n\n"
+            upcomingBoss = "-----Upcoming Bosses for XX:45-----\n" + worldBossList[5][0] + "\n" + worldBossList[5][1]
+        elif int(timeBoss) >= int(worldBossTime[5]) and int(timeBoss) <= int(worldBossTime[5] + 9):
+            bossList = "```-----Active Bosses for XX:45-----\n" + worldBossList[5][0] + "\n" + worldBossList[5][1] + "\n\n"
+            upcomingBoss = "-----Upcoming Bosses for XX:55-----\n" + worldBossList[6][0] + "\n" + worldBossList[6][1] + "\n" + worldBossList[6][2] + "```"
+        else:
+            bossList = "```-----Active Bosses for XX:55-----\n" + worldBossList[6][0] + "\n" + worldBossList[6][1] + "\n" + worldBossList[6][2] + "\n\n"
+            upcomingBoss = "-----Upcoming Bosses for XX:05-----\n" + worldBossList[0][0] + "\n" + worldBossList[0][1] + "\n" + worldBossList[0][2] + "\n" + worldBossList[0][3] + "\n" + worldBossList[0][4] + "```"
+        msg = bossList + upcomingBoss
+        await client.send_message(message.channel, msg)
+        
     if message.content.startswith('!quack'):
         msg = 'https://www.youtube.com/watch?v=QKq42dE6cvI'
         await client.send_message(message.channel, msg)

@@ -15,7 +15,7 @@ worldBossList = [["Acreon - Lavendar Island", "Doondun - Kerning Junkyard", "Fur
                  ["Griffin - Frostheart", "Heartless Baphomet - Frostpeak Mountain", "Ureus - Nazkar Pyramid"],
                  ["Griffina - Trinian Crossing", "Toh and Googoo - Whistler Cliffs"],
                  ["Vayar Gatekeeper - Precipice Fortress", "Giant Turtle - Beachway 111"],
-                 ["Aplha Turtle - Ellua Riverside"],
+                 ["Alpha Turtle - Ellua Riverside"],
                  ["Lernos - Twilight Moon Castle", "MK 52 Alpha Bot - Neuron DNA Research Center"],
                  ["Amadon - Ludari Arena", "Devilin Warrior - South Royal Road", "Pekanos - Fractured Canyon"]]
 tokenAddress = os.environ['token']
@@ -72,12 +72,12 @@ async def on_message(message):
             upcomingBoss = "-----Upcoming Bosses for XX:35-----\n" + worldBossList[3][0] + "\n" + worldBossList[3][1] + "```"
         elif int(timeBoss) >= int(worldBossTime[3]) and int(timeBoss) <= int(worldBossTime[3] + 9):
             bossList = "```-----Active Bosses for XX:35-----\n" + worldBossList[3][0] + "\n" + worldBossList[3][1] + "\n\n"
-            upcomingBoss = "-----Upcoming Bosses for XX:40-----\n" + worldBossList[4][0] + "\n\n" + "```"
+            upcomingBoss = "-----Upcoming Bosses for XX:40-----\n" + worldBossList[4][0] + "\n\n" + "\n-----Upcoming Bosses for XX:45-----\n" + worldBossList[5][0] + "\n" + worldBossList[5][1] + "```"
         elif int(timeBoss) >= int(worldBossTime[4]) and int(timeBoss) <= int(worldBossTime[4] + 9):
             bossList = "```-----Active Bosses for XX:40 -----\n" + worldBossList[4][0] + "\n\n"
             upcomingBoss = "-----Upcoming Bosses for XX:45-----\n" + worldBossList[5][0] + "\n" + worldBossList[5][1]
         elif int(timeBoss) >= int(worldBossTime[5]) and int(timeBoss) <= int(worldBossTime[5] + 9):
-            bossList = "```-----Active Bosses for XX:45-----\n" + worldBossList[5][0] + "\n" + worldBossList[5][1] + "\n\n"
+            bossList = "```" + "-----Active Bosses for XX:40 -----\n" + worldBossList[4][0] +"-----Active Bosses for XX:45-----\n" + worldBossList[5][0] + "\n" + worldBossList[5][1] + "\n\n"
             upcomingBoss = "-----Upcoming Bosses for XX:55-----\n" + worldBossList[6][0] + "\n" + worldBossList[6][1] + "\n" + worldBossList[6][2] + "```"
         else:
             bossList = "```-----Active Bosses for XX:55-----\n" + worldBossList[6][0] + "\n" + worldBossList[6][1] + "\n" + worldBossList[6][2] + "\n\n"

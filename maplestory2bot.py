@@ -55,7 +55,7 @@ async def on_message(message):
         msg = str(msgContent).format(message)
         await client.send_message(message.channel, msg)
 
-    if message.content.startswith('!boss'):
+    if message.content.startswith('!boss') and str(message.channel) == 'gq-boss-info':
         msgTime = datetime.datetime.now().time()
         timeSplit = (str(msgTime).split(':'))
         timeBoss = int(timeSplit[1])

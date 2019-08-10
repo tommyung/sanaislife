@@ -48,12 +48,12 @@ async def on_message(message):
     
     elif message.content.startswith('!flip'):
        result = random.randint(0,1)
-       if result == 1:
-         print('Heads!')
-         await client.send_message(message.channel, content = 'Heads!')
-       else:
-         print('Tails!')
-         await client.send_message(message.channel, content = 'Tails!')
+    if result == 1:
+       print('Heads!')
+       await client.send_message(message.channel, content = 'Heads!')
+    else:
+       print('Tails!')
+       await client.send_message(message.channel, content = 'Tails!')
     
 @client.event
 async def on_message(message):

@@ -40,26 +40,22 @@ def raidList(raid, raidName):
 async def on_member_join(member):
     role = discord.utils.get(member.server.roles, name='Interviewee')
     await client.add_roles(member,role)
-
-@client.event
-async def on_message(message):
-    if message.author == client.user:
-       return
-    
-    elif message.content.startswith('!flip'):
-       result = random.randint(0,1)
-    if result == 1:
-       print('Heads!')
-       await client.send_message(message.channel, content = 'Heads!')
-    else:
-       print('Tails!')
-       await client.send_message(message.channel, content = 'Tails!')
     
 @client.event
 async def on_message(message):
     if message.author == client.user:
         return
 
+    if message.content.startswith('!flip'):
+        sampales = [ random.randint(1,2) for i in range(9) ]
+        heads = samples.count(1)
+        tails = samples.count(2)
+        
+        for s in samples:
+          msg = 'Heads' if s==1 else 'Tails'
+          print msg       
+        print "Heads count=%d, Tails count=%d" % (heads,tails)
+      
     if message.content.startswith('!time'):
         msgTime = datetime.datetime.now().time()
         timeSplit = (str(msgTime).split(':'))

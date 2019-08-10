@@ -1,4 +1,5 @@
 import discord
+import random
 from oauth2client.service_account import ServiceAccountCredentials
 from discord.ext import commands
 import os, sys, traceback, datetime
@@ -45,23 +46,14 @@ async def on_message(message):
     if message.author == client.user:
        return
     
-    if message.content.startswith('!flip'):
-       import random
-       def coinToss():
-         number = input("Number of times to flip coin: ")
-         recordList = []
-         heads = 0
-         tails = 0
-         for amount in range(number):
-            flip = random.randint(0, 1)
-            if (flip == 0):
-               print("Heads")
-               recordList.append("Heads")
-            else:
-               print("Tails")
-               recordList.append("Tails")
-         print(str(recordList))
-         print(str(recordList.count("Heads")) + str(recordList.count("Tails")))
+    elif message.content.startswith('!flip'):
+       result = random.randint(0,1)
+       if result == 1:
+         print('Heads!')
+         await client.send_message(message.channel, content = 'Heads!')
+       else:
+         print('Tails!')
+         await client.send_message(message.channel, content = 'Tails!')
     
 @client.event
 async def on_message(message):

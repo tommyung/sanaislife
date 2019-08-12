@@ -1,5 +1,6 @@
 import discord
 import random
+from random import randrange
 from oauth2client.service_account import ServiceAccountCredentials
 from discord.ext import commands
 import os, sys, traceback, datetime
@@ -47,14 +48,21 @@ async def on_message(message):
         return
 
     if message.content.startswith('!flip'):
-        sampales = [ random.randint(1,2) for i in range(9) ]
-        heads = samples.count(1)
-        tails = samples.count(2)
+      headsOrTails = (randrange(2))
+      if headsOrTails == 0
+        msg = "Heads"
+        await client.send_message(message.channel, msg)
+      else
+        msg = "Tails"
+        await client.send_message(message.channel, msg)
+       # sampales = [ random.randint(1,2) for i in range(9) ]
+       # heads = samples.count(1)
+       # tails = samples.count(2)
         
-        for s in samples:
-          msg = 'Heads' if s==1 else 'Tails'
-          print msg       
-        print "Heads count=%d, Tails count=%d" % (heads,tails)
+       # for s in samples:
+       #   msg = 'Heads' if s==1 else 'Tails'
+       #   print msg       
+       # print "Heads count=%d, Tails count=%d" % (heads,tails)
       
     if message.content.startswith('!time'):
         msgTime = datetime.datetime.now().time()

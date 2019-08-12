@@ -1,6 +1,5 @@
 import discord
 import random
-from random import randrange
 from oauth2client.service_account import ServiceAccountCredentials
 from discord.ext import commands
 import os, sys, traceback, datetime
@@ -50,8 +49,8 @@ async def on_message(message):
     if message.content.startswith('!flip'):
       heads = 0
       tails = 1
-      headsOrTails = (randrange(2))
-      if int(headsOrTails) == heads
+      headsOrTails = random.randint(0, 1)
+      if headsOrTails == heads
         msg = "Heads!"
         await client.send_message(message.channel, msg)
       else

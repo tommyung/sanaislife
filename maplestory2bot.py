@@ -48,12 +48,14 @@ async def on_message(message):
         return
 
     if message.content.startswith('!flip'):
+      heads = 0
+      tails = 1
       headsOrTails = (randrange(2))
-      if int(headsOrTails) == 0
-        msg = "Heads"
+      if int(headsOrTails) == heads
+        msg = "Heads!"
         await client.send_message(message.channel, msg)
       else
-        msg = "Tails"
+        msg = "Tails!"
         await client.send_message(message.channel, msg)
        # sampales = [ random.randint(1,2) for i in range(9) ]
        # heads = samples.count(1)

@@ -49,7 +49,7 @@ async def on_message(message):
 
     if message.content.startswith('!flip'):
       headsOrTails = (randrange(2))
-      if headsOrTails == 0
+      if int(headsOrTails) == 0
         msg = "Heads"
         await client.send_message(message.channel, msg)
       else

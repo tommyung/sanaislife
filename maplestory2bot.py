@@ -52,7 +52,7 @@ async def on_message(message):
         await client.send_message(message.channel, msg)
     
     if message.content.startswith('!tosssalad'):
-        msg = "(╯°□°）╯︵ Salad"
+        msg = "(╯°□°）╯︵ :salad:"
         await client.send_message(message.channel, msg)
        # sampales = [ random.randint(1,2) for i in range(9) ]
        # heads = samples.count(1)

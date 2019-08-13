@@ -10,6 +10,7 @@ from sqlalchemy.ext.declarative import declarative_base
 
 raidDict = {}
 client = discord.Client()
+coinFlip = ["Heads", "Tails"]
 derogatoryList = ["whore", "nigger", "nigga", "chink", "nigguh", "niggar", "beaner"]
 worldBossTime = [5, 15, 25, 35, 40, 45, 55]
 worldBossList = [["Acreon - Lavendar Island", "Doondun - Kerning Junkyard", "Furious Baphomet - Mirror Castle", "Ikar Morde - Frozencrest", "Lo and Moomoo - Baum Tree"],
@@ -47,14 +48,7 @@ async def on_message(message):
         return
 
     if message.content.startswith('!flip'):
-      heads = 0
-      tails = 1
-      headsOrTails = random.randint(0, 1)
-      if headsOrTails == heads
-        msg = "Heads!"
-        await client.send_message(message.channel, msg)
-      else
-        msg = "Tails!"
+        msg = random.choice(coinFlip)
         await client.send_message(message.channel, msg)
        # sampales = [ random.randint(1,2) for i in range(9) ]
        # heads = samples.count(1)

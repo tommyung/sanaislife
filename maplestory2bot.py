@@ -50,6 +50,10 @@ async def on_message(message):
     if message.content.startswith('!flip'):
         msg = random.choice(coinFlip)
         await client.send_message(message.channel, msg)
+    
+    if message.content.startswith('!tosssalad'):
+        msg = "(╯°□°）╯︵ Salad"
+        await client.send_message(message.channel, msg)
        # sampales = [ random.randint(1,2) for i in range(9) ]
        # heads = samples.count(1)
        # tails = samples.count(2)
